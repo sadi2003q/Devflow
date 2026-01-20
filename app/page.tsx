@@ -306,6 +306,7 @@ interface ROICalculatorProps {
   isDarkMode: boolean;
 }
 
+
 const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline, isDarkMode }) => {
   const colors = getColors(isDarkMode);
   const [tickets, setTickets] = useState(100);
@@ -321,69 +322,148 @@ const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline, is
   const { hoursSaved, moneySaved } = calculateSavings();
 
   return (
-      <section className={`py-32 px-6 ${colors.background.primary}`}>
-        <div className="max-w-4xl mx-auto">
-          <h2 className={`text-4xl md:text-6xl font-bold text-center ${colors.text.primary} mb-4`}>
-            {headline}
-          </h2>
-          <p className={`text-center ${colors.text.secondary} mb-12 text-lg`}>
-            {subheadline}
-          </p>
+      <section className={`relative py-32 px-6 overflow-hidden ${colors.background.primary}`}>
+        {/* Animated background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
+        </div>
 
-          <div className={`${colors.background.tertiary} border ${colors.border.primary} rounded-2xl p-8 backdrop-blur-md`}>
-            <div className="space-y-8">
-              <div>
-                <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
-                  Monthly Support Tickets: <span className="text-emerald-400 font-bold">{tickets}</span>
-                </label>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-400/30 mb-6">
+              <Zap className="w-4 h-4 text-cyan-400" />
+              <span className="text-sm font-semibold text-cyan-400">Interactive Calculator</span>
+            </div>
+            <h2 className={`text-4xl md:text-6xl font-bold text-center mb-4 ${colors.text.primary}`}>
+              {headline}
+            </h2>
+            <p className={`text-center ${colors.text.secondary} text-lg max-w-2xl mx-auto`}>
+              {subheadline}
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+            {/* Controls Panel */}
+            <div className="space-y-6">
+              {/* Ticket Slider */}
+              <div className={`group ${colors.background.tertiary} border ${colors.border.primary} rounded-2xl p-6 backdrop-blur-xl hover:border-cyan-400/50 transition-all duration-300`}>
+                <div className="flex items-center justify-between mb-4">
+                  <label className={`text-sm font-semibold ${colors.text.secondary}`}>
+                    Monthly Support Tickets
+                  </label>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 rounded-lg border border-cyan-400/30">
+                    <span className="text-2xl font-bold text-cyan-400">{tickets}</span>
+                  </div>
+                </div>
                 <input
                     type="range"
                     min="10"
                     max="500"
                     value={tickets}
                     onChange={(e) => setTickets(Number(e.target.value))}
-                    className={`w-full h-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'} rounded-lg appearance-none cursor-pointer accent-emerald-500`}
+                    className={`w-full h-3 ${isDarkMode ? 'bg-zinc-800' : 'bg-gray-200'} rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-cyan-500 [&::-webkit-slider-thumb]:shadow-[0_0_20px_rgba(6,182,212,0.5)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:hover:scale-125`}
                 />
+                <div className="flex justify-between mt-2">
+                  <span className="text-xs text-gray-500">10</span>
+                  <span className="text-xs text-gray-500">500</span>
+                </div>
               </div>
 
-              <div>
-                <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
-                  Avg. Resolution Time (minutes): <span className="text-emerald-400 font-bold">{resolutionTime}</span>
-                </label>
+              {/* Time Slider */}
+              <div className={`group ${colors.background.tertiary} border ${colors.border.primary} rounded-2xl p-6 backdrop-blur-xl hover:border-violet-400/50 transition-all duration-300`}>
+                <div className="flex items-center justify-between mb-4">
+                  <label className={`text-sm font-semibold ${colors.text.secondary}`}>
+                    Avg. Resolution Time
+                  </label>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-violet-500/10 rounded-lg border border-violet-400/30">
+                    <span className="text-2xl font-bold text-violet-400">{resolutionTime}</span>
+                    <span className="text-sm text-violet-400">min</span>
+                  </div>
+                </div>
                 <input
                     type="range"
                     min="5"
                     max="120"
                     value={resolutionTime}
                     onChange={(e) => setResolutionTime(Number(e.target.value))}
-                    className={`w-full h-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'} rounded-lg appearance-none cursor-pointer accent-emerald-500`}
+                    className={`w-full h-3 ${isDarkMode ? 'bg-zinc-800' : 'bg-gray-200'} rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-violet-500 [&::-webkit-slider-thumb]:shadow-[0_0_20px_rgba(139,92,246,0.5)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:hover:scale-125`}
                 />
+                <div className="flex justify-between mt-2">
+                  <span className="text-xs text-gray-500">5 min</span>
+                  <span className="text-xs text-gray-500">120 min</span>
+                </div>
               </div>
 
-              <div>
-                <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
-                  Agent Hourly Rate ($): <span className="text-emerald-400 font-bold">{hourlyRate}</span>
-                </label>
+              {/* Rate Slider */}
+              <div className={`group ${colors.background.tertiary} border ${colors.border.primary} rounded-2xl p-6 backdrop-blur-xl hover:border-pink-400/50 transition-all duration-300`}>
+                <div className="flex items-center justify-between mb-4">
+                  <label className={`text-sm font-semibold ${colors.text.secondary}`}>
+                    Agent Hourly Rate
+                  </label>
+                  <div className="flex items-center gap-1 px-3 py-1.5 bg-pink-500/10 rounded-lg border border-pink-400/30">
+                    <span className="text-lg text-pink-400">$</span>
+                    <span className="text-2xl font-bold text-pink-400">{hourlyRate}</span>
+                  </div>
+                </div>
                 <input
                     type="range"
                     min="20"
                     max="200"
                     value={hourlyRate}
                     onChange={(e) => setHourlyRate(Number(e.target.value))}
-                    className={`w-full h-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'} rounded-lg appearance-none cursor-pointer accent-emerald-500`}
+                    className={`w-full h-3 ${isDarkMode ? 'bg-zinc-800' : 'bg-gray-200'} rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-pink-500 [&::-webkit-slider-thumb]:shadow-[0_0_20px_rgba(236,72,153,0.5)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:hover:scale-125`}
                 />
+                <div className="flex justify-between mt-2">
+                  <span className="text-xs text-gray-500">$20</span>
+                  <span className="text-xs text-gray-500">$200</span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-12 p-8 bg-linear-to-br from-emerald-500/20 to-purple-500/20 rounded-xl border border-emerald-500/30">
-              <div className="text-center">
-                <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>DevFlow could save you</p>
-                <p className="text-6xl font-bold text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-purple-400 mb-2">
-                  ${moneySaved.toLocaleString()}
-                </p>
-                <p className={`text-2xl ${colors.text.primary} font-semibold`}>
-                  and {hoursSaved} hours every month
-                </p>
+            {/* Results Display */}
+            <div className="relative">
+              {/* Glow effect */}
+              <div className="absolute -inset-4 bg-linear-to-br from-cyan-500/20 via-violet-500/20 to-pink-500/20 rounded-3xl blur-2xl"></div>
+
+              <div className={`relative ${isDarkMode ? 'bg-linear-to-br from-zinc-900 to-zinc-950' : 'bg-linear-to-br from-white to-gray-50'} rounded-3xl p-8 border-2 ${isDarkMode ? 'border-cyan-400/20' : 'border-cyan-400/30'} shadow-2xl`}>
+                <div className="text-center space-y-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-cyan-500/10 via-violet-500/10 to-pink-500/10 border border-cyan-400/30">
+                    <Clock className="w-4 h-4 text-cyan-400" />
+                    <span className="text-sm font-semibold text-cyan-400">Your Potential Savings</span>
+                  </div>
+
+                  {/* Money Saved */}
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-linear-to-r from-cyan-500/10 via-violet-500/10 to-pink-500/10 blur-xl"></div>
+                    <div className="relative">
+                      <p className={`text-sm ${colors.text.secondary} mb-2`}>Monthly Cost Reduction</p>
+                      <div className="flex items-start justify-center gap-1">
+                        <span className="text-4xl font-bold bg-linear-to-r from-cyan-400 via-violet-400 to-pink-400 bg-clip-text text-transparent">$</span>
+                        <span className="text-7xl md:text-8xl font-black bg-linear-to-r from-cyan-400 via-violet-400 to-pink-400 bg-clip-text text-transparent leading-none">
+                          {moneySaved.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Hours Saved */}
+                  <div className={`grid grid-cols-2 gap-4 pt-6 border-t ${isDarkMode ? 'border-white/10' : 'border-black/10'}`}>
+                    <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-400/30">
+                      <p className="text-sm text-cyan-400 mb-1">Hours Saved</p>
+                      <p className="text-3xl font-bold text-cyan-400">{hoursSaved}h</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-violet-500/10 border border-violet-400/30">
+                      <p className="text-sm text-violet-400 mb-1">Annual Savings</p>
+                      <p className="text-3xl font-bold text-violet-400">${(moneySaved * 12).toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  {/* Bottom text */}
+                  <p className={`text-sm ${colors.text.tertiary} pt-4`}>
+                    Based on 60% automation rate with DevFlow AI
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -413,6 +493,17 @@ const SolutionSection: React.FC<{ benefits: BenefitProps[], isDarkMode: boolean 
   const colors = getColors(isDarkMode);
   const title = useInView<HTMLHeadingElement>();
   const subtitle = useInView<HTMLParagraphElement>();
+
+
+  const particles = [
+    { left: '10%', top: '20%', duration: '3.5s', delay: '0.5s', color: 'bg-emerald-400/40' },
+    { left: '30%', top: '50%', duration: '4s', delay: '1s', color: 'bg-orange-400/40' },
+    { left: '60%', top: '10%', duration: '3.2s', delay: '0.8s', color: 'bg-lime-400/40' },
+    { left: '80%', top: '70%', duration: '4.1s', delay: '1.2s', color: 'bg-emerald-400/40' },
+    { left: '50%', top: '40%', duration: '3.8s', delay: '0.3s', color: 'bg-orange-400/40' },
+    { left: '20%', top: '80%', duration: '4.5s', delay: '0.7s', color: 'bg-lime-400/40' },
+  ];
+
 
   return (
       <section className={`py-32 px-6 ${colors.background.secondary}`}>
@@ -520,23 +611,20 @@ const SolutionSection: React.FC<{ benefits: BenefitProps[], isDarkMode: boolean 
 
                             {/* Floating particles effect */}
                             <div className="absolute inset-0 overflow-hidden">
-                              {[...Array(6)].map((_, i) => (
+                              {particles.map((p, i) => (
                                   <div
                                       key={i}
-                                      className={`absolute w-2 h-2 rounded-full ${
-                                          index === 0 ? 'bg-emerald-400/40' :
-                                              index === 1 ? 'bg-orange-400/40' :
-                                                  'bg-lime-400/40'
-                                      }`}
+                                      className={`absolute w-2 h-2 rounded-full ${p.color}`}
                                       style={{
-                                        left: `${Math.random() * 100}%`,
-                                        top: `${Math.random() * 100}%`,
-                                        animation: `float ${3 + Math.random() * 2}s ease-in-out infinite`,
-                                        animationDelay: `${Math.random() * 2}s`
+                                        left: p.left,
+                                        top: p.top,
+                                        animation: `float ${p.duration} ease-in-out infinite`,
+                                        animationDelay: p.delay,
                                       }}
                                   ></div>
                               ))}
                             </div>
+
 
                             {/* Border highlight */}
                             <div className={`absolute inset-0 rounded-xl border ${
