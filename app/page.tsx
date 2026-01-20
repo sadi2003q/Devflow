@@ -4,7 +4,60 @@ import React, {useState, useEffect, useRef} from 'react';
 import { Moon, Sun, Check, ArrowRight, Zap, Shield, Clock, MessageSquare, GitBranch, Star, ChevronDown, Code, Lock } from 'lucide-react';
 import { SiGithub } from 'react-icons/si';
 
+// Centralized Color System
+const COLORS = {
+  dark: {
+    background: {
+      primary: 'bg-black',
+      secondary: 'bg-zinc-950',
+      tertiary: 'bg-white/5',
+      gradient: 'bg-gradient-to-br from-black via-emerald-950/20 to-black',
+    },
+    text: {
+      primary: 'text-white',
+      secondary: 'text-gray-400',
+      tertiary: 'text-gray-500',
+      accent: 'text-emerald-400',
+    },
+    border: {
+      primary: 'border-white/10',
+      secondary: 'border-white/20',
+      accent: 'border-emerald-500/50',
+    },
+    hover: {
+      background: 'hover:bg-white/5',
+      border: 'hover:border-emerald-500/50',
+    },
+  },
+  light: {
+    background: {
+      primary: 'bg-white',
+      secondary: 'bg-gray-50',
+      tertiary: 'bg-black/5',
+      gradient: 'bg-gradient-to-br from-white via-emerald-50 to-white',
+    },
+    text: {
+      primary: 'text-black',
+      secondary: 'text-gray-600',
+      tertiary: 'text-gray-600',
+      accent: 'text-emerald-600',
+    },
+    border: {
+      primary: 'border-black/10',
+      secondary: 'border-black/20',
+      accent: 'border-emerald-500/30',
+    },
+    hover: {
+      background: 'hover:bg-black/5',
+      border: 'hover:border-emerald-500',
+    },
+  },
+};
 
+// Helper function to get colors based on the theme
+const getColors = (isDarkMode: boolean) => isDarkMode ? COLORS.dark : COLORS.light;
+
+// Custom hook for intersection observer
 export function useInView<T extends HTMLElement>(
     options: IntersectionObserverInit = { threshold: 0.2 }
 ) {
@@ -17,7 +70,7 @@ export function useInView<T extends HTMLElement>(
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setIsVisible(true);
-        observer.unobserve(entry.target); // animate only once
+        observer.unobserve(entry.target);
       }
     }, options);
 
@@ -29,27 +82,22 @@ export function useInView<T extends HTMLElement>(
   return { ref, isVisible };
 }
 
-
-// Theme Context
-const ThemeContext = React.createContext<{
-  theme: 'dark' | 'light';
-  toggleTheme: () => void;
-}>({
-  theme: 'dark',
-  toggleTheme: () => {},
-});
-
 // Theme Toggle Button Component
-const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = React.useContext(ThemeContext);
+interface ThemeToggleProps {
+  isDarkMode: boolean;
+  setIsDarkMode: (value: boolean) => void;
+}
+
+const ThemeToggle: React.FC<ThemeToggleProps> = ({ isDarkMode, setIsDarkMode }) => {
+  const colors = getColors(isDarkMode);
 
   return (
       <button
-          onClick={toggleTheme}
-          className="fixed top-6 right-6 z-50 p-3 rounded-lg bg-white/10 dark:bg-white/10 light:bg-black/10 backdrop-blur-md border border-white/20 dark:border-white/20 light:border-black/20 hover:border-emerald-500/50 transition-all duration-200 hover:scale-105"
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className={`fixed top-6 right-6 z-50 p-3 rounded-lg backdrop-blur-md ${colors.background.tertiary} ${colors.border.primary} border ${colors.hover.border} transition-all duration-200 hover:scale-105`}
           aria-label="Toggle theme"
       >
-        {theme === 'dark' ? (
+        {isDarkMode ? (
             <Sun className="w-5 h-5 text-amber-400" />
         ) : (
             <Moon className="w-5 h-5 text-purple-600" />
@@ -58,40 +106,41 @@ const ThemeToggle: React.FC = () => {
   );
 };
 
-// 1. Hero Section Component
+// Hero Section Component
 interface HeroProps {
   headline: string;
   subheadline: string;
   ctaText: string;
   trustSignal: string;
+  isDarkMode: boolean;
 }
 
-const Hero: React.FC<HeroProps> = ({ headline, subheadline, ctaText, trustSignal }) => {
+const Hero: React.FC<HeroProps> = ({ headline, subheadline, ctaText, trustSignal, isDarkMode }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const colors = getColors(isDarkMode);
 
   useEffect(() => {
 
-    const makeVisible =() => {
+    const changeVisibility = () => {
       setIsVisible(true);
     }
 
-    makeVisible();
-
+    changeVisibility();
 
   }, []);
 
   return (
-      <section className="min-h-screen flex items-center justify-center px-6 py-24 bg-black dark:bg-black light:bg-white">
+      <section className={`min-h-screen flex items-center justify-center px-6 py-24 ${colors.background.primary}`}>
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div
               className={`space-y-8 transition-all duration-1000 ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white dark:text-white light:text-black leading-tight tracking-tight">
+            <h1 className={`text-5xl md:text-7xl font-bold ${colors.text.primary} leading-tight tracking-tight`}>
               {headline}
             </h1>
-            <p className="text-xl text-gray-400 dark:text-gray-400 light:text-gray-600 leading-relaxed">
+            <p className={`text-xl ${colors.text.secondary} leading-relaxed`}>
               {subheadline}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -99,17 +148,17 @@ const Hero: React.FC<HeroProps> = ({ headline, subheadline, ctaText, trustSignal
                 {ctaText}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="px-8 py-4 border-2 border-white/20 dark:border-white/20 light:border-black/20 text-white dark:text-white light:text-black font-semibold rounded-lg hover:bg-white/5 dark:hover:bg-white/5 light:hover:bg-black/5 hover:border-emerald-500 transition-all duration-200">
+              <button className={`px-8 py-4 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200`}>
                 Watch Demo
               </button>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex -space-x-2">
-                <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-300 to-pink-500 border-2 border-black dark:border-black light:border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-cyan-500 border-2 border-black dark:border-black light:border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-500 to-red-500 border-2 border-black dark:border-black light:border-white"></div>
+                <div className={`w-10 h-10 rounded-full bg-linear-to-br from-purple-300 to-pink-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
+                <div className={`w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-cyan-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
+                <div className={`w-10 h-10 rounded-full bg-linear-to-br from-orange-500 to-red-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-500 light:text-gray-600">{trustSignal}</p>
+              <p className={`text-sm ${colors.text.tertiary}`}>{trustSignal}</p>
             </div>
           </div>
 
@@ -120,7 +169,7 @@ const Hero: React.FC<HeroProps> = ({ headline, subheadline, ctaText, trustSignal
           >
             <div className="relative">
               <div className="absolute inset-0 bg-linear-to-br from-emerald-500/20 to-purple-500/20 blur-3xl rounded-full"></div>
-              <div className="relative bg-white/5 dark:bg-white/5 light:bg-black/5 backdrop-blur-xl border border-white/10 dark:border-white/10 light:border-black/10 rounded-2xl p-8 shadow-2xl">
+              <div className={`relative ${colors.background.tertiary} backdrop-blur-xl border ${colors.border.primary} rounded-2xl p-8 shadow-2xl`}>
                 <div className="flex gap-2 mb-4">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -128,9 +177,9 @@ const Hero: React.FC<HeroProps> = ({ headline, subheadline, ctaText, trustSignal
                 </div>
                 <div className="space-y-4 font-mono text-sm">
                   <div className="text-emerald-400">$ devflow init</div>
-                  <div className="text-gray-400 dark:text-gray-400 light:text-gray-600">✓ Connected to GitHub</div>
-                  <div className="text-gray-400 dark:text-gray-400 light:text-gray-600">✓ Indexed 247 documents</div>
-                  <div className="text-gray-400 dark:text-gray-400 light:text-gray-600">✓ AI model deployed</div>
+                  <div className={colors.text.secondary}>✓ Connected to GitHub</div>
+                  <div className={colors.text.secondary}>✓ Indexed 247 documents</div>
+                  <div className={colors.text.secondary}>✓ AI model deployed</div>
                   <div className="text-purple-400 animate-pulse">→ Ready to automate</div>
                 </div>
               </div>
@@ -141,50 +190,48 @@ const Hero: React.FC<HeroProps> = ({ headline, subheadline, ctaText, trustSignal
   );
 };
 
-// 2. Problem Section Component
+// Problem Card Component
 interface ProblemCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
+  isDarkMode: boolean;
 }
 
-const ProblemCard: React.FC<ProblemCardProps> = ({ title, description, icon }) => {
+const ProblemCard: React.FC<ProblemCardProps> = ({ title, description, icon, isDarkMode }) => {
+  const colors = getColors(isDarkMode);
+
   return (
-      <div className="group relative bg-white/5 dark:bg-white/5 light:bg-black/5 border border-white/10 dark:border-white/10 light:border-black/10 rounded-xl p-8 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+      <div className={`group relative ${colors.background.tertiary} border ${colors.border.primary} rounded-xl p-8 ${colors.hover.border} transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]`}>
         <div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
         <div className="relative">
           <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4 text-emerald-400">
             {icon}
           </div>
-          <h3 className="text-2xl font-bold text-white dark:text-white light:text-black mb-3">{title}</h3>
-          <p className="text-gray-400 dark:text-gray-400 light:text-gray-600 leading-relaxed">{description}</p>
+          <h3 className={`text-2xl font-bold ${colors.text.primary} mb-3`}>{title}</h3>
+          <p className={`${colors.text.secondary} leading-relaxed`}>{description}</p>
         </div>
       </div>
   );
 };
 
+// Problem Section Component
 interface ProblemSectionProps {
   headline: string;
   subheadline: string;
   problems: Array<{ title: string; description: string; icon: string }>;
+  isDarkMode: boolean;
 }
 
+const ProblemSection: React.FC<ProblemSectionProps> = (
+    {
+     headline,
+     subheadline,
+     problems,
+     isDarkMode,
+   }) => {
+  const colors = getColors(isDarkMode);
 
-
-
-
-
-
-
-
-
-
-
-const ProblemSection: React.FC<ProblemSectionProps> = ({
-                                                         headline,
-                                                         subheadline,
-                                                         problems,
-                                                       }) => {
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case "slack":
@@ -198,44 +245,33 @@ const ProblemSection: React.FC<ProblemSectionProps> = ({
     }
   };
 
-  // Header animation
   const header = useInView<HTMLHeadingElement>();
   const subHeader = useInView<HTMLParagraphElement>();
 
   return (
-      <section className="py-32 px-6 bg-zinc-950 dark:bg-zinc-950 light:bg-gray-50">
+      <section className={`py-32 px-6 ${colors.background.secondary}`}>
         <div className="max-w-7xl mx-auto">
-          {/* Headline */}
           <h2
               ref={header.ref}
-              className={`text-4xl md:text-6xl font-bold text-center mb-4 transition-all duration-1000
-            ${
-                  header.isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-              }
-            text-white dark:text-white light:text-black`}
+              className={`text-4xl md:text-6xl font-bold text-center mb-4 transition-all duration-1000 ${
+                  header.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              } ${colors.text.primary}`}
           >
             {headline}
           </h2>
 
-          {/* Subheadline */}
           <p
               ref={subHeader.ref}
-              className={`text-xl text-center mb-16 max-w-3xl mx-auto transition-all duration-1000 delay-200
-            ${
-                  subHeader.isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-              }
-            text-gray-500 dark:text-gray-500 light:text-gray-600`}
+              className={`text-xl text-center mb-16 max-w-3xl mx-auto transition-all duration-1000 delay-200 ${
+                  subHeader.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              } ${colors.text.tertiary}`}
           >
             {subheadline}
           </p>
 
-          {/* Cards */}
           <div className="grid md:grid-cols-3 gap-8">
             {problems.map((problem, index) => {
+
               // eslint-disable-next-line react-hooks/rules-of-hooks
               const card = useInView<HTMLDivElement>();
 
@@ -243,11 +279,8 @@ const ProblemSection: React.FC<ProblemSectionProps> = ({
                   <div
                       key={index}
                       ref={card.ref}
-                      className={`transition-all duration-1000 ease-out
-                  ${
-                          card.isVisible
-                              ? "opacity-100 translate-y-0"
-                              : "opacity-0 translate-y-12"
+                      className={`transition-all duration-1000 ease-out ${
+                          card.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
                       }`}
                       style={{ transitionDelay: `${index * 150}ms` }}
                   >
@@ -255,6 +288,7 @@ const ProblemSection: React.FC<ProblemSectionProps> = ({
                         title={problem.title}
                         description={problem.description}
                         icon={getIcon(problem.icon)}
+                        isDarkMode={isDarkMode}
                     />
                   </div>
               );
@@ -265,30 +299,15 @@ const ProblemSection: React.FC<ProblemSectionProps> = ({
   );
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 3. ROI Calculator Component
+// ROI Calculator Component
 interface ROICalculatorProps {
   headline: string;
   subheadline: string;
+  isDarkMode: boolean;
 }
 
-const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline }) => {
+const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline, isDarkMode }) => {
+  const colors = getColors(isDarkMode);
   const [tickets, setTickets] = useState(100);
   const [resolutionTime, setResolutionTime] = useState(30);
   const [hourlyRate, setHourlyRate] = useState(50);
@@ -302,19 +321,19 @@ const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline }) 
   const { hoursSaved, moneySaved } = calculateSavings();
 
   return (
-      <section className="py-32 px-6 bg-black dark:bg-black light:bg-white">
+      <section className={`py-32 px-6 ${colors.background.primary}`}>
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold text-center text-white dark:text-white light:text-black mb-4">
+          <h2 className={`text-4xl md:text-6xl font-bold text-center ${colors.text.primary} mb-4`}>
             {headline}
           </h2>
-          <p className="text-center text-gray-400 dark:text-gray-400 light:text-gray-600 mb-12 text-lg">
+          <p className={`text-center ${colors.text.secondary} mb-12 text-lg`}>
             {subheadline}
           </p>
 
-          <div className="bg-white/5 dark:bg-white/5 light:bg-black/5 border border-white/10 dark:border-white/10 light:border-black/10 rounded-2xl p-8 backdrop-blur-md">
+          <div className={`${colors.background.tertiary} border ${colors.border.primary} rounded-2xl p-8 backdrop-blur-md`}>
             <div className="space-y-8">
               <div>
-                <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-3">
+                <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
                   Monthly Support Tickets: <span className="text-emerald-400 font-bold">{tickets}</span>
                 </label>
                 <input
@@ -323,12 +342,12 @@ const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline }) 
                     max="500"
                     value={tickets}
                     onChange={(e) => setTickets(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-800 dark:bg-gray-800 light:bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    className={`w-full h-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'} rounded-lg appearance-none cursor-pointer accent-emerald-500`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-3">
+                <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
                   Avg. Resolution Time (minutes): <span className="text-emerald-400 font-bold">{resolutionTime}</span>
                 </label>
                 <input
@@ -337,12 +356,12 @@ const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline }) 
                     max="120"
                     value={resolutionTime}
                     onChange={(e) => setResolutionTime(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-800 dark:bg-gray-800 light:bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    className={`w-full h-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'} rounded-lg appearance-none cursor-pointer accent-emerald-500`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-3">
+                <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
                   Agent Hourly Rate ($): <span className="text-emerald-400 font-bold">{hourlyRate}</span>
                 </label>
                 <input
@@ -351,18 +370,18 @@ const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline }) 
                     max="200"
                     value={hourlyRate}
                     onChange={(e) => setHourlyRate(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-800 dark:bg-gray-800 light:bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    className={`w-full h-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'} rounded-lg appearance-none cursor-pointer accent-emerald-500`}
                 />
               </div>
             </div>
 
             <div className="mt-12 p-8 bg-linear-to-br from-emerald-500/20 to-purple-500/20 rounded-xl border border-emerald-500/30">
               <div className="text-center">
-                <p className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-700 mb-2">DevFlow could save you</p>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>DevFlow could save you</p>
                 <p className="text-6xl font-bold text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-purple-400 mb-2">
                   ${moneySaved.toLocaleString()}
                 </p>
-                <p className="text-2xl text-white dark:text-white light:text-black font-semibold">
+                <p className={`text-2xl ${colors.text.primary} font-semibold`}>
                   and {hoursSaved} hours every month
                 </p>
               </div>
@@ -373,7 +392,7 @@ const ROICalculator: React.FC<ROICalculatorProps> = ({ headline, subheadline }) 
   );
 };
 
-// 4. Solution/Benefits Section Component
+// Solution Section Component
 interface BenefitProps {
   title: string;
   description: string;
@@ -383,45 +402,40 @@ interface BenefitProps {
 
 
 
-const SolutionSection: React.FC<{ benefits: BenefitProps[] }> = ({
-                                                                   benefits,
-                                                                 }) => {
+
+
+
+const SolutionSection: React.FC<{ benefits: BenefitProps[], isDarkMode: boolean }> = (
+    {
+      benefits,
+      isDarkMode,
+    }) => {
+  const colors = getColors(isDarkMode);
   const title = useInView<HTMLHeadingElement>();
   const subtitle = useInView<HTMLParagraphElement>();
 
   return (
-      <section className="py-32 px-6 bg-zinc-950 dark:bg-zinc-950 light:bg-gray-50">
+      <section className={`py-32 px-6 ${colors.background.secondary}`}>
         <div className="max-w-7xl mx-auto">
-          {/* Title */}
           <h2
               ref={title.ref}
-              className={`text-4xl md:text-6xl font-bold text-center mb-4 transition-all duration-1000
-            ${
-                  title.isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-              }
-            text-white dark:text-white light:text-black`}
+              className={`text-4xl md:text-6xl font-bold text-center mb-4 transition-all duration-1000 ${
+                  title.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              } ${colors.text.primary}`}
           >
             The New Way
           </h2>
 
-          {/* Subtitle */}
           <p
               ref={subtitle.ref}
-              className={`text-xl text-center mb-20 max-w-3xl mx-auto transition-all duration-1000 delay-200
-            ${
-                  subtitle.isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-              }
-            text-gray-500 dark:text-gray-500 light:text-gray-600`}
+              className={`text-xl text-center mb-20 max-w-3xl mx-auto transition-all duration-1000 delay-200 ${
+                  subtitle.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              } ${colors.text.tertiary}`}
           >
             Stop patching broken workflows. DevFlow rebuilds your productivity from
             the ground up.
           </p>
 
-          {/* Benefit blocks */}
           <div className="space-y-24">
             {benefits.map((benefit, index) => {
               // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -431,19 +445,15 @@ const SolutionSection: React.FC<{ benefits: BenefitProps[] }> = ({
                   <div
                       key={index}
                       ref={row.ref}
-                      className={`grid md:grid-cols-2 gap-12 items-center transition-all duration-1000 ease-out
-                  ${
-                          row.isVisible
-                              ? "opacity-100 translate-y-0"
-                              : "opacity-0 translate-y-12"
+                      className={`grid md:grid-cols-2 gap-12 items-center transition-all duration-1000 ease-out ${
+                          row.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
                       }`}
                   >
-                    {/* Text */}
                     <div className={index % 2 === 1 ? "md:order-2" : ""}>
-                      <h3 className="text-3xl md:text-4xl font-bold text-white dark:text-white light:text-black mb-4">
+                      <h3 className={`text-3xl md:text-4xl font-bold ${colors.text.primary} mb-4`}>
                         {benefit.title}
                       </h3>
-                      <p className="text-lg text-gray-400 dark:text-gray-400 light:text-gray-600 mb-6 leading-relaxed">
+                      <p className={`text-lg ${colors.text.secondary} mb-6 leading-relaxed`}>
                         {benefit.description}
                       </p>
 
@@ -451,20 +461,103 @@ const SolutionSection: React.FC<{ benefits: BenefitProps[] }> = ({
                         {benefit.benefits.map((item, i) => (
                             <li key={i} className="flex items-start gap-3">
                               <Check className="w-6 h-6 text-emerald-400 mt-1 shrink-0" />
-                              <span className="text-gray-300 dark:text-gray-300 light:text-gray-700 text-lg">
-                          {item}
-                        </span>
+                              <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-lg`}>
+                                {item}
+                              </span>
                             </li>
                         ))}
                       </ul>
                     </div>
 
-                    {/* Visual */}
                     <div className={index % 2 === 1 ? "md:order-1" : ""}>
-                      <div className="bg-white/5 dark:bg-white/5 light:bg-black/5 border border-white/10 dark:border-white/10 light:border-black/10 rounded-2xl p-6 backdrop-blur-md">
-                        <div className="aspect-video bg-linear-to-br from-emerald-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-                          <div className="text-6xl">
-                            {["🎯", "⚡", "🔄"][index]}
+                      <div className="relative group/card">
+
+
+                        <div className={`relative ${colors.background.tertiary} border ${colors.border.primary} rounded-2xl p-8 backdrop-blur-md overflow-hidden group-hover/card:border-opacity-50 transition-all duration-300`}>
+                          {/* Background pattern */}
+                          <div className="absolute inset-0 opacity-5">
+                            <div className="absolute inset-0" style={{
+                              backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 1px)`,
+                              backgroundSize: '32px 32px'
+                            }}></div>
+                          </div>
+
+                          {/* Main visual card */}
+                          <div className="relative aspect-video rounded-xl overflow-hidden">
+                            {/* Gradient background with different colors per index */}
+                            <div className={`absolute inset-0 ${
+                                index === 0 ? 'bg-linear-to-br from-emerald-500/30 via-lime-500/20 to-yellow-500/10' :
+                                    index === 1 ? 'bg-linear-to-br from-orange-500/30 via-yellow-500/20 to-lime-500/10' :
+                                        'bg-linear-to-br from-lime-500/30 via-emerald-500/20 to-teal-500/10'
+                            }`}></div>
+
+                            {/* Animated gradient orbs */}
+                            <div className={`absolute top-1/4 left-1/4 w-32 h-32 rounded-full blur-2xl opacity-60 ${
+                                index === 0 ? 'bg-emerald-400' :
+                                    index === 1 ? 'bg-orange-400' :
+                                        'bg-lime-400'
+                            } animate-pulse`}></div>
+                            <div className={`absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full blur-2xl opacity-60 ${
+                                index === 0 ? 'bg-lime-400' :
+                                    index === 1 ? 'bg-yellow-400' :
+                                        'bg-emerald-400'
+                            } animate-pulse`} style={{animationDelay: '1s'}}></div>
+
+                            {/* Emoji with enhanced styling */}
+                            <div className="relative z-10 flex items-center justify-center h-full">
+                              <div className="relative">
+                                {/* Glow behind emoji */}
+                                <div className={`absolute inset-0 blur-3xl scale-150 ${
+                                    index === 0 ? 'bg-emerald-400/50' :
+                                        index === 1 ? 'bg-orange-400/50' :
+                                            'bg-lime-400/50'
+                                }`}></div>
+                                <div className="text-7xl md:text-8xl filter drop-shadow-2xl transform group-hover/card:scale-110 transition-transform duration-300">
+                                  {["🎯", "⚡", "🔄"][index]}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Floating particles effect */}
+                            <div className="absolute inset-0 overflow-hidden">
+                              {[...Array(6)].map((_, i) => (
+                                  <div
+                                      key={i}
+                                      className={`absolute w-2 h-2 rounded-full ${
+                                          index === 0 ? 'bg-emerald-400/40' :
+                                              index === 1 ? 'bg-orange-400/40' :
+                                                  'bg-lime-400/40'
+                                      }`}
+                                      style={{
+                                        left: `${Math.random() * 100}%`,
+                                        top: `${Math.random() * 100}%`,
+                                        animation: `float ${3 + Math.random() * 2}s ease-in-out infinite`,
+                                        animationDelay: `${Math.random() * 2}s`
+                                      }}
+                                  ></div>
+                              ))}
+                            </div>
+
+                            {/* Border highlight */}
+                            <div className={`absolute inset-0 rounded-xl border ${
+                                index === 0 ? 'border-emerald-400/20' :
+                                    index === 1 ? 'border-orange-400/20' :
+                                        'border-lime-400/20'
+                            } group-hover/card:border-opacity-60 transition-all`}></div>
+                          </div>
+
+                          {/* Feature tag */}
+                          <div className="mt-4 flex justify-center">
+                            <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold ${
+                                index === 0 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-400/20' :
+                                    index === 1 ? 'bg-orange-500/10 text-orange-400 border border-orange-400/20' :
+                                        'bg-lime-500/10 text-lime-400 border border-lime-400/20'
+                            }`}>
+                              {index === 0 && <Shield className="w-3 h-3" />}
+                              {index === 1 && <Zap className="w-3 h-3" />}
+                              {index === 2 && <GitBranch className="w-3 h-3" />}
+                              {index === 0 ? 'Verified & Secure' : index === 1 ? 'Real-time Sync' : 'Smart Handoff'}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -486,40 +579,30 @@ const SolutionSection: React.FC<{ benefits: BenefitProps[] }> = ({
 
 
 
-
-
-
-
-// 5. Timeline Component
+// Timeline Component
 interface TimelineProps {
   headline: string;
   steps: Array<{ time: string; title: string; description: string }>;
+  isDarkMode: boolean;
 }
 
-
-
-const Timeline: React.FC<TimelineProps> = ({ headline, steps }) => {
+const Timeline: React.FC<TimelineProps> = ({ headline, steps, isDarkMode }) => {
+  const colors = getColors(isDarkMode);
   const header = useInView<HTMLHeadingElement>();
 
   return (
-      <section className="py-32 px-6 bg-black dark:bg-black light:bg-white">
+      <section className={`py-32 px-6 ${colors.background.primary}`}>
         <div className="max-w-4xl mx-auto">
-          {/* Headline */}
           <h2
               ref={header.ref}
-              className={`text-4xl md:text-6xl font-bold text-center mb-16 transition-all duration-1000
-            ${
-                  header.isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-              }
-            text-white dark:text-white light:text-black`}
+              className={`text-4xl md:text-6xl font-bold text-center mb-16 transition-all duration-1000 ${
+                  header.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              } ${colors.text.primary}`}
           >
             {headline}
           </h2>
 
           <div className="relative">
-            {/* Vertical line */}
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-linear-to-b from-emerald-500 via-emerald-500/50 to-transparent" />
 
             <div className="space-y-12">
@@ -531,23 +614,19 @@ const Timeline: React.FC<TimelineProps> = ({ headline, steps }) => {
                     <div
                         key={index}
                         ref={item.ref}
-                        className={`relative pl-20 transition-all duration-700 ease-out
-                    ${
-                            item.isVisible
-                                ? "opacity-100 translate-x-0"
-                                : "opacity-0 -translate-x-10"
+                        className={`relative pl-20 transition-all duration-700 ease-out ${
+                            item.isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
                         }`}
                     >
-                      {/* Dot */}
-                      <div className="absolute left-5 top-2 w-6 h-6 bg-emerald-500 rounded-full border-4 border-black dark:border-black light:border-white shadow-[0_0_20px_rgba(16,185,129,0.5)]" />
+                      <div className={`absolute left-5 top-2 w-6 h-6 bg-emerald-500 rounded-full border-4 ${isDarkMode ? 'border-black' : 'border-white'} shadow-[0_0_20px_rgba(16,185,129,0.5)]`} />
 
                       <div className="font-mono text-sm text-emerald-400 mb-2">
                         {step.time}
                       </div>
-                      <h3 className="text-2xl font-bold text-white dark:text-white light:text-black mb-2">
+                      <h3 className={`text-2xl font-bold ${colors.text.primary} mb-2`}>
                         {step.title}
                       </h3>
-                      <p className="text-gray-400 dark:text-gray-400 light:text-gray-600 text-lg">
+                      <p className={`${colors.text.secondary} text-lg`}>
                         {step.description}
                       </p>
                     </div>
@@ -560,10 +639,7 @@ const Timeline: React.FC<TimelineProps> = ({ headline, steps }) => {
   );
 };
 
-
-
-
-// 6. Social Proof & Differentiation Section
+// Social Proof Component
 interface SocialProofProps {
   testimonial: {
     quote: string;
@@ -572,9 +648,12 @@ interface SocialProofProps {
     company: string;
   };
   techSpecs: Array<{ label: string; value: string; icon: string }>;
+  isDarkMode: boolean;
 }
 
-const SocialProof: React.FC<SocialProofProps> = ({ testimonial, techSpecs }) => {
+const SocialProof: React.FC<SocialProofProps> = ({ testimonial, techSpecs, isDarkMode }) => {
+  const colors = getColors(isDarkMode);
+
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'lock':
@@ -589,36 +668,36 @@ const SocialProof: React.FC<SocialProofProps> = ({ testimonial, techSpecs }) => 
   };
 
   return (
-      <section className="py-32 px-6 bg-zinc-950 dark:bg-zinc-950 light:bg-gray-50">
+      <section className={`py-32 px-6 ${colors.background.secondary}`}>
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 mb-20">
             <div className="bg-linear-to-br from-emerald-500/10 to-purple-500/10 border border-emerald-500/30 rounded-2xl p-12">
               <Star className="w-12 h-12 text-emerald-400 mb-6 fill-emerald-400" />
-              <blockquote className="text-2xl md:text-3xl font-bold text-white dark:text-white light:text-black mb-6 leading-relaxed">
+              <blockquote className={`text-2xl md:text-3xl font-bold ${colors.text.primary} mb-6 leading-relaxed`}>
                 &#34;{testimonial.quote}&#34;
               </blockquote>
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-linear-to-br from-yellow-300 to-red-300"></div>
                 <div>
-                  <p className="font-bold text-white dark:text-white light:text-black">{testimonial.author}</p>
-                  <p className="text-gray-400 dark:text-gray-400 light:text-gray-600">{testimonial.role} at {testimonial.company}</p>
+                  <p className={`font-bold ${colors.text.primary}`}>{testimonial.author}</p>
+                  <p className={colors.text.secondary}>{testimonial.role} at {testimonial.company}</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-6">
-              <h3 className="text-3xl font-bold text-white dark:text-white light:text-black mb-8">The Wall of Logic</h3>
+              <h3 className={`text-3xl font-bold ${colors.text.primary} mb-8`}>The Wall of Logic</h3>
               {techSpecs.map((spec, index) => (
                   <div
                       key={index}
-                      className="flex items-center gap-4 bg-white/5 dark:bg-white/5 light:bg-black/5 border border-white/10 dark:border-white/10 light:border-black/10 rounded-xl p-6"
+                      className={`flex items-center gap-4 ${colors.background.tertiary} border ${colors.border.primary} rounded-xl p-6`}
                   >
                     <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-400">
                       {getIcon(spec.icon)}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">{spec.label}</p>
-                      <p className="text-xl font-bold text-white dark:text-white light:text-black">{spec.value}</p>
+                      <p className={`text-sm ${colors.text.secondary}`}>{spec.label}</p>
+                      <p className={`text-xl font-bold ${colors.text.primary}`}>{spec.value}</p>
                     </div>
                   </div>
               ))}
@@ -629,22 +708,24 @@ const SocialProof: React.FC<SocialProofProps> = ({ testimonial, techSpecs }) => 
   );
 };
 
-// 7. FAQ Section Component
+// FAQ Item Component
 interface FAQItemProps {
   question: string;
   answer: string;
+  isDarkMode: boolean;
 }
 
-const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
+const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isDarkMode }) => {
+  const colors = getColors(isDarkMode);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-      <div className="border-b border-white/10 dark:border-white/10 light:border-black/10">
+      <div className={`border-b ${colors.border.primary}`}>
         <button
             onClick={() => setIsOpen(!isOpen)}
             className="w-full py-6 flex items-center justify-between text-left group"
         >
-          <h3 className="text-xl font-bold text-white dark:text-white light:text-black group-hover:text-emerald-400 transition-colors">
+          <h3 className={`text-xl font-bold ${colors.text.primary} group-hover:text-emerald-400 transition-colors`}>
             {question}
           </h3>
           <ChevronDown
@@ -658,7 +739,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
                 isOpen ? 'max-h-96 pb-6' : 'max-h-0'
             }`}
         >
-          <p className="text-gray-400 dark:text-gray-400 light:text-gray-600 text-lg leading-relaxed">
+          <p className={`${colors.text.secondary} text-lg leading-relaxed`}>
             {answer}
           </p>
         </div>
@@ -666,23 +747,27 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
   );
 };
 
+// FAQ Section Component
 interface FAQSectionProps {
   faqs: Array<{ question: string; answer: string }>;
+  isDarkMode: boolean;
 }
 
-const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
+const FAQSection: React.FC<FAQSectionProps> = ({ faqs, isDarkMode }) => {
+  const colors = getColors(isDarkMode);
+
   return (
-      <section className="py-32 px-6 bg-black dark:bg-black light:bg-white">
+      <section className={`py-32 px-6 ${colors.background.primary}`}>
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold text-center text-white dark:text-white light:text-black mb-4">
+          <h2 className={`text-4xl md:text-6xl font-bold text-center ${colors.text.primary} mb-4`}>
             Questions? Answered.
           </h2>
-          <p className="text-xl text-gray-500 dark:text-gray-500 light:text-gray-600 text-center mb-16">
+          <p className={`text-xl ${colors.text.tertiary} text-center mb-16`}>
             Everything you need to know before you get started
           </p>
           <div className="space-y-2">
             {faqs.map((faq, index) => (
-                <FAQItem key={index} question={faq.question} answer={faq.answer} />
+                <FAQItem key={index} question={faq.question} answer={faq.answer} isDarkMode={isDarkMode} />
             ))}
           </div>
         </div>
@@ -690,207 +775,282 @@ const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
   );
 };
 
-// 8. Final CTA Section Component
+// Final CTA Section Component
 interface CTASectionProps {
   headline: string;
   subheadline: string;
   buttonText: string;
   microcopy: string;
+  isDarkMode: boolean;
 }
 
-const CTASection: React.FC<CTASectionProps> = ({ headline, subheadline, buttonText, microcopy }) => {
+const CTASection: React.FC<CTASectionProps> = ({ headline, subheadline, buttonText, microcopy, isDarkMode }) => {
+  const colors = getColors(isDarkMode);
+
   return (
-      <section className="py-32 px-6 bg-linear-to-br from-black via-emerald-950/20 to-black dark:from-black dark:via-emerald-950/20 dark:to-black light:from-white light:via-emerald-50 light:to-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="relative">
-            <div className="absolute inset-0 bg-emerald-500/20 blur-3xl"></div>
-            <div className="relative bg-white/5 dark:bg-white/5 light:bg-black/5 border border-emerald-500/50 dark:border-emerald-500/50 light:border-emerald-500/30 rounded-3xl p-12 md:p-16 backdrop-blur-md shadow-[0_0_50px_rgba(16,185,129,0.3)]">
-              <h2 className="text-4xl md:text-6xl font-bold text-white dark:text-white light:text-black mb-6">
+      <section className={`relative py-32 px-6 overflow-hidden ${colors.background.primary}`}>
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 -left-20 w-96 h-96 bg-linear-to-r from-emerald-400/30 to-lime-400/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-linear-to-l from-orange-400/30 to-yellow-400/30 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-linear-to-br from-emerald-300/20 via-lime-300/20 to-yellow-300/20 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-emerald-500/10 via-lime-500/10 to-yellow-500/10 border border-emerald-400/30 mb-8">
+              <Zap className="w-4 h-4 text-emerald-400" />
+              <span className="text-sm font-semibold bg-linear-to-r from-emerald-400 to-lime-400 bg-clip-text text-transparent">
+                Limited Time Offer
+              </span>
+            </div>
+
+            <h2 className={`text-5xl md:text-7xl font-black ${colors.text.primary} mb-6 leading-tight`}>
+              <span className="bg-linear-to-r from-emerald-400 via-lime-400 to-yellow-400 bg-clip-text text-transparent">
                 {headline}
-              </h2>
-              <p className="text-xl text-gray-400 dark:text-gray-400 light:text-gray-600 mb-10">
-                {subheadline}
-              </p>
-              <button className="group px-12 py-6 bg-emerald-500 hover:bg-emerald-400 text-black text-xl font-bold rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-[0_0_40px_rgba(16,185,129,0.6)] flex items-center justify-center gap-3 mx-auto">
-                <SiGithub className="w-7 h-7" />
-                {buttonText}
-                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <p className="text-sm text-gray-500 dark:text-gray-500 light:text-gray-600 mt-6">{microcopy}</p>
+              </span>
+            </h2>
+
+            <p className={`text-xl md:text-2xl ${colors.text.secondary} mb-12 max-w-2xl mx-auto`}>
+              {subheadline}
+            </p>
+          </div>
+
+          {/* CTA Card */}
+          <div className="relative group">
+            {/* Glow effect */}
+            <div className="absolute -inset-1 bg-linear-to-r from-emerald-500 via-lime-500 to-yellow-500 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+
+            <div className={`relative ${isDarkMode ? 'bg-zinc-900/90' : 'bg-white/90'} backdrop-blur-xl rounded-3xl p-8 md:p-12 border ${isDarkMode ? 'border-emerald-500/20' : 'border-emerald-400/30'}`}>
+              <div className="flex flex-col items-center gap-6">
+                {/* Main CTA Button */}
+                <button className="group/btn relative px-10 py-5 bg-linear-to-r from-emerald-500 via-lime-500 to-yellow-500 text-black text-lg md:text-xl font-bold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_60px_rgba(16,185,129,0.4)] flex items-center justify-center gap-3 w-full md:w-auto overflow-hidden">
+                  <div className="absolute inset-0 bg-linear-to-r from-yellow-500 via-lime-500 to-emerald-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                  <SiGithub className="w-6 h-6 relative z-10" />
+                  <span className="relative z-10">{buttonText}</span>
+                  <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform relative z-10" />
+                </button>
+
+                {/* Trust signals */}
+                <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
+                    <span className={colors.text.secondary}>No credit card required</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-lime-500 flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
+                    <span className={colors.text.secondary}>2-minute setup</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
+                    <span className={colors.text.secondary}>14-day free trial</span>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-8 mt-6 w-full max-w-2xl">
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-emerald-400 to-lime-400 bg-clip-text text-transparent">5K+</div>
+                    <div className={`text-sm ${colors.text.secondary} mt-1`}>Developers</div>
+                  </div>
+                  <div className="text-center border-l border-r border-emerald-500/20">
+                    <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-lime-400 to-yellow-400 bg-clip-text text-transparent">60%</div>
+                    <div className={`text-sm ${colors.text.secondary} mt-1`}>Time Saved</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">24/7</div>
+                    <div className={`text-sm ${colors.text.secondary} mt-1`}>AI Support</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Bottom microcopy */}
+          <p className={`text-center text-sm ${colors.text.tertiary} mt-8`}>
+            {microcopy}
+          </p>
         </div>
       </section>
   );
 };
 
+
+
+
+
+
+
+
+
+
+
+
 // Main App Part
 export default function App() {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
-
-  useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-      document.documentElement.classList.add('dark');
-    }
-  }, [theme]);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   return (
-      <ThemeContext.Provider value={{ theme, toggleTheme }}>
-        <div className={`min-h-screen ${theme === 'dark' ? 'dark' : 'light'}`}>
-          <ThemeToggle />
+      <div className="min-h-screen">
+        <ThemeToggle isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
-          {/* 1. Hero Section */}
-          <Hero
-              headline="Stop chasing updates. Start shipping code."
-              subheadline="DevFlow unifies your tasks and team chat into one workspace. Resolve 60% of inquiries instantly and reclaim 2 hours of deep work every day."
-              ctaText="Get Started Free — 2 mins to GitHub Sync"
-              trustSignal="Used by 1,000+ engineering-led teams"
-          />
+        {/* Hero Section */}
+        <Hero
+            headline="Stop chasing updates. Start shipping code."
+            subheadline="DevFlow unifies your tasks and team chat into one workspace. Resolve 60% of inquiries instantly and reclaim 2 hours of deep work every day."
+            ctaText="Get Started Free — 2 mins to GitHub Sync"
+            trustSignal="Used by 1,000+ engineering-led teams"
+            isDarkMode={isDarkMode}
+        />
 
-          {/* 2. Problem & Agitation Section */}
-          <ProblemSection
-              headline="Your productivity is dying in a thousand tabs."
-              subheadline="Repetitive questions and fragmented tools are killing your flow state"
-              problems={[
-                {
-                  title: "The Slack Abyss",
-                  description: "Decisions buried under 500 'quick question' pings. Your focus is fractured before you write a single line of code.",
-                  icon: "slack"
-                },
-                {
-                  title: "The Jira Graveyard",
-                  description: "Outdated tickets and a UI so slow it's ignored. Your project board is a lie, and everyone knows it.",
-                  icon: "jira"
-                },
-                {
-                  title: "The Context Tax",
-                  description: "Every tool-switch costs 20 minutes of focus. You're spending more time managing tools than building product.",
-                  icon: "context"
-                }
-              ]}
-          />
+        {/* Problem Section */}
+        <ProblemSection
+            headline="Your productivity is dying in a thousand tabs."
+            subheadline="Repetitive questions and fragmented tools are killing your flow state"
+            problems={[
+              {
+                title: "The Slack Abyss",
+                description: "Decisions buried under 500 'quick question' pings. Your focus is fractured before you write a single line of code.",
+                icon: "slack"
+              },
+              {
+                title: "The Jira Graveyard",
+                description: "Outdated tickets and a UI so slow it's ignored. Your project board is a lie, and everyone knows it.",
+                icon: "jira"
+              },
+              {
+                title: "The Context Tax",
+                description: "Every tool-switch costs 20 minutes of focus. You're spending more time managing tools than building product.",
+                icon: "context"
+              }
+            ]}
+            isDarkMode={isDarkMode}
+        />
 
-          {/* 3. Interactive ROI Calculator */}
-          <ROICalculator
-              headline="Stop guessing. Calculate your reclaimed hours."
-              subheadline="See the exact time and money DevFlow saves your team"
-          />
+        {/* ROI Calculator */}
+        <ROICalculator
+            headline="Stop guessing. Calculate your reclaimed hours."
+            subheadline="See the exact time and money DevFlow saves your team"
+            isDarkMode={isDarkMode}
+        />
 
-          {/* 4. Solution/Benefits Section */}
-          <SolutionSection
-              benefits={[
-                {
-                  title: "The Hallucination Guard",
-                  description: "DevFlow only answers from your docs. If it's not there, it escalates. No 'AI guesses.'",
-                  benefits: [
-                    "Verified Source Accuracy - Every answer is traceable to your documentation",
-                    "Automatic escalation for complex queries that need human expertise",
-                    "100% transparency with source citations on every response"
-                  ],
-                  index: 0
-                },
-                {
-                  title: "Live Git Sync",
-                  description: "Your board updates itself. Open a PR, and the ticket moves. No manual status pings.",
-                  benefits: [
-                    "Real-time GitHub integration that watches your repositories 24/7",
-                    "Automatic status updates - from 'In Progress' to 'Ready for Review' to 'Done'",
-                    "Zero manual tracking - your team's work speaks for itself"
-                  ],
-                  index: 1
-                },
-                {
-                  title: "Seamless Handoff",
-                  description: "Complex issues reach experts with the complete chat history already attached.",
-                  benefits: [
-                    "Full context preservation - no more 'can you forward me that thread?'",
-                    "Smart routing to the right expert based on skills and availability",
-                    "Zero information loss between AI and human handoff"
-                  ],
-                  index: 2
-                }
-              ]}
-          />
+        {/* Solution Section */}
+        <SolutionSection
+            benefits={[
+              {
+                title: "The Hallucination Guard",
+                description: "DevFlow only answers from your docs. If it's not there, it escalates. No 'AI guesses.'",
+                benefits: [
+                  "Verified Source Accuracy - Every answer is traceable to your documentation",
+                  "Automatic escalation for complex queries that need human expertise",
+                  "100% transparency with source citations on every response"
+                ],
+                index: 0
+              },
+              {
+                title: "Live Git Sync",
+                description: "Your board updates itself. Open a PR, and the ticket moves. No manual status pings.",
+                benefits: [
+                  "Real-time GitHub integration that watches your repositories 24/7",
+                  "Automatic status updates - from 'In Progress' to 'Ready for Review' to 'Done'",
+                  "Zero manual tracking - your team's work speaks for itself"
+                ],
+                index: 1
+              },
+              {
+                title: "Seamless Handoff",
+                description: "Complex issues reach experts with the complete chat history already attached.",
+                benefits: [
+                  "Full context preservation - no more 'can you forward me that thread?'",
+                  "Smart routing to the right expert based on skills and availability",
+                  "Zero information loss between AI and human handoff"
+                ],
+                index: 2
+              }
+            ]}
+            isDarkMode={isDarkMode}
+        />
 
-          {/* 5. The Momentum Timeline */}
-          <Timeline
-              headline="From 0 to Automated in 120 Minutes"
-              steps={[
-                {
-                  time: "09:00 AM",
-                  title: "Connect Knowledge Base",
-                  description: "Link your Notion, GitHub, or documentation sources. One-click integrations with zero configuration required."
-                },
-                {
-                  time: "09:15 AM",
-                  title: "DevFlow indexes content",
-                  description: "Our AI builds your private model from your docs. It learns your codebase, conventions, and tribal knowledge."
-                },
-                {
-                  time: "11:00 AM",
-                  title: "Deploy and automate",
-                  description: "Your first ticket is resolved while you're at lunch. DevFlow is already saving your team hours of repetitive work."
-                }
-              ]}
-          />
+        {/* Timeline */}
+        <Timeline
+            headline="From 0 to Automated in 120 Minutes"
+            steps={[
+              {
+                time: "09:00 AM",
+                title: "Connect Knowledge Base",
+                description: "Link your Notion, GitHub, or documentation sources. One-click integrations with zero configuration required."
+              },
+              {
+                time: "09:15 AM",
+                title: "DevFlow indexes content",
+                description: "Our AI builds your private model from your docs. It learns your codebase, conventions, and tribal knowledge."
+              },
+              {
+                time: "11:00 AM",
+                title: "Deploy and automate",
+                description: "Your first ticket is resolved while you're at lunch. DevFlow is already saving your team hours of repetitive work."
+              }
+            ]}
+            isDarkMode={isDarkMode}
+        />
 
-          {/* 6. Social Proof & Differentiation */}
-          <SocialProof
-              testimonial={{
-                quote: "DevFlow automated 55% of our tier-1 inquiries in week one. My team reclaimed 10 hours a week for deep work.",
-                author: "Sarah Chen",
-                role: "CTO",
-                company: "TechStream"
-              }}
-              techSpecs={[
-                { label: "Security", value: "AES-256 + SOC2 Type II", icon: "lock" },
-                { label: "Latency", value: "<200ms global response", icon: "zap" },
-                { label: "CLI", value: "Full control via CMD+K", icon: "code" }
-              ]}
-          />
+        {/* Social Proof */}
+        <SocialProof
+            testimonial={{
+              quote: "DevFlow automated 55% of our tier-1 inquiries in week one. My team reclaimed 10 hours a week for deep work.",
+              author: "Sarah Chen",
+              role: "CTO",
+              company: "TechStream"
+            }}
+            techSpecs={[
+              { label: "Security", value: "AES-256 + SOC2 Type II", icon: "lock" },
+              { label: "Latency", value: "<200ms global response", icon: "zap" },
+              { label: "CLI", value: "Full control via CMD+K", icon: "code" }
+            ]}
+            isDarkMode={isDarkMode}
+        />
 
-          {/* 7. FAQ Section */}
-          <FAQSection
-              faqs={[
-                {
-                  question: "Does it require an engineer to set up?",
-                  answer: "No. If you can copy-paste a URL, you can deploy DevFlow in minutes. Our setup wizard walks you through connecting your knowledge base, and we handle all the AI infrastructure behind the scenes."
-                },
-                {
-                  question: "What about data security?",
-                  answer: "Your data is encrypted at rest with AES-256 and never used to train public models. We're SOC2 Type II certified and maintain strict data isolation. Your private documentation stays private."
-                },
-                {
-                  question: "How accurate is the AI?",
-                  answer: "DevFlow only answers from your verified sources. If the answer isn't in your documentation, it escalates to a human instead of guessing. This 'Hallucination Guard' ensures 100% accuracy on every automated response."
-                },
-                {
-                  question: "Can I customize the AI's responses?",
-                  answer: "Absolutely. You control the tone, technical depth, and escalation rules. DevFlow adapts to your team's communication style and can be tuned to match your brand voice."
-                },
-                {
-                  question: "What integrations do you support?",
-                  answer: "GitHub, GitLab, Notion, Confluence, Slack, Linear, Jira, and more. We're constantly adding new integrations based on customer feedback. If you need a specific integration, let us know."
-                }
-              ]}
-          />
+        {/* FAQ Section */}
+        <FAQSection
+            faqs={[
+              {
+                question: "Does it require an engineer to set up?",
+                answer: "No. If you can copy-paste a URL, you can deploy DevFlow in minutes. Our setup wizard walks you through connecting your knowledge base, and we handle all the AI infrastructure behind the scenes."
+              },
+              {
+                question: "What about data security?",
+                answer: "Your data is encrypted at rest with AES-256 and never used to train public models. We're SOC2 Type II certified and maintain strict data isolation. Your private documentation stays private."
+              },
+              {
+                question: "How accurate is the AI?",
+                answer: "DevFlow only answers from your verified sources. If the answer isn't in your documentation, it escalates to a human instead of guessing. This 'Hallucination Guard' ensures 100% accuracy on every automated response."
+              },
+              {
+                question: "Can I customize the AI's responses?",
+                answer: "Absolutely. You control the tone, technical depth, and escalation rules. DevFlow adapts to your team's communication style and can be tuned to match your brand voice."
+              },
+              {
+                question: "What integrations do you support?",
+                answer: "GitHub, GitLab, Notion, Confluence, Slack, Linear, Jira, and more. We're constantly adding new integrations based on customer feedback. If you need a specific integration, let us know."
+              }
+            ]}
+            isDarkMode={isDarkMode}
+        />
 
-          {/* 8. Final CTA */}
-          <CTASection
-              headline="Ready to reclaim your focus?"
-              subheadline="Join 5,000+ developers shipping faster. Start your 14-day Pro trial today."
-              buttonText="Continue with GitHub"
-              microcopy="No credit card required. Setup takes < 2 minutes."
-          />
-        </div>
-      </ThemeContext.Provider>
+        {/* Final CTA */}
+        <CTASection
+            headline="Ready to reclaim your focus?"
+            subheadline="Join 5,000+ developers shipping faster. Start your 14-day Pro trial today."
+            buttonText="Continue with GitHub"
+            microcopy="No credit card required. Setup takes < 2 minutes."
+            isDarkMode={isDarkMode}
+        />
+      </div>
   );
 }
