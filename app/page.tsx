@@ -381,74 +381,114 @@ interface BenefitProps {
   index: number;
 }
 
-const SolutionSection: React.FC<{ benefits: BenefitProps[] }> = ({ benefits }) => {
-  const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        },
-        { threshold: 0.1 }
-    );
 
-    const element = document.getElementById('solution-section');
-    if (element) observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
+const SolutionSection: React.FC<{ benefits: BenefitProps[] }> = ({
+                                                                   benefits,
+                                                                 }) => {
+  const title = useInView<HTMLHeadingElement>();
+  const subtitle = useInView<HTMLParagraphElement>();
 
   return (
-      <section id="solution-section" className="py-32 px-6 bg-zinc-950 dark:bg-zinc-950 light:bg-gray-50">
+      <section className="py-32 px-6 bg-zinc-950 dark:bg-zinc-950 light:bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold text-center text-white dark:text-white light:text-black mb-4">
+          {/* Title */}
+          <h2
+              ref={title.ref}
+              className={`text-4xl md:text-6xl font-bold text-center mb-4 transition-all duration-1000
+            ${
+                  title.isVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-8"
+              }
+            text-white dark:text-white light:text-black`}
+          >
             The New Way
           </h2>
-          <p className="text-xl text-gray-500 dark:text-gray-500 light:text-gray-600 text-center mb-20 max-w-3xl mx-auto">
-            Stop patching broken workflows. DevFlow rebuilds your productivity from the ground up.
+
+          {/* Subtitle */}
+          <p
+              ref={subtitle.ref}
+              className={`text-xl text-center mb-20 max-w-3xl mx-auto transition-all duration-1000 delay-200
+            ${
+                  subtitle.isVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-8"
+              }
+            text-gray-500 dark:text-gray-500 light:text-gray-600`}
+          >
+            Stop patching broken workflows. DevFlow rebuilds your productivity from
+            the ground up.
           </p>
 
+          {/* Benefit blocks */}
           <div className="space-y-24">
-            {benefits.map((benefit, index) => (
-                <div
-                    key={index}
-                    className={`grid md:grid-cols-2 gap-12 items-center transition-all duration-1000 ${
-                        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                    }`}
-                    style={{ transitionDelay: `${index * 200}ms` }}
-                >
-                  <div className={index % 2 === 1 ? 'md:order-2' : ''}>
-                    <h3 className="text-3xl md:text-4xl font-bold text-white dark:text-white light:text-black mb-4">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-lg text-gray-400 dark:text-gray-400 light:text-gray-600 mb-6 leading-relaxed">
-                      {benefit.description}
-                    </p>
-                    <ul className="space-y-3">
-                      {benefit.benefits.map((item, i) => (
-                          <li key={i} className="flex items-start gap-3">
-                            <Check className="w-6 h-6 text-emerald-400 mt-1 shrink-0" />
-                            <span className="text-gray-300 dark:text-gray-300 light:text-gray-700 text-lg">{item}</span>
-                          </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className={index % 2 === 1 ? 'md:order-1' : ''}>
-                    <div className="bg-white/5 dark:bg-white/5 light:bg-black/5 border border-white/10 dark:border-white/10 light:border-black/10 rounded-2xl p-6 backdrop-blur-md">
-                      <div className="aspect-video bg-linear-to-br from-emerald-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-                        <div className="text-6xl">{['🎯', '⚡', '🔄'][index]}</div>
+            {benefits.map((benefit, index) => {
+              // eslint-disable-next-line react-hooks/rules-of-hooks
+              const row = useInView<HTMLDivElement>();
+
+              return (
+                  <div
+                      key={index}
+                      ref={row.ref}
+                      className={`grid md:grid-cols-2 gap-12 items-center transition-all duration-1000 ease-out
+                  ${
+                          row.isVisible
+                              ? "opacity-100 translate-y-0"
+                              : "opacity-0 translate-y-12"
+                      }`}
+                  >
+                    {/* Text */}
+                    <div className={index % 2 === 1 ? "md:order-2" : ""}>
+                      <h3 className="text-3xl md:text-4xl font-bold text-white dark:text-white light:text-black mb-4">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-lg text-gray-400 dark:text-gray-400 light:text-gray-600 mb-6 leading-relaxed">
+                        {benefit.description}
+                      </p>
+
+                      <ul className="space-y-3">
+                        {benefit.benefits.map((item, i) => (
+                            <li key={i} className="flex items-start gap-3">
+                              <Check className="w-6 h-6 text-emerald-400 mt-1 shrink-0" />
+                              <span className="text-gray-300 dark:text-gray-300 light:text-gray-700 text-lg">
+                          {item}
+                        </span>
+                            </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Visual */}
+                    <div className={index % 2 === 1 ? "md:order-1" : ""}>
+                      <div className="bg-white/5 dark:bg-white/5 light:bg-black/5 border border-white/10 dark:border-white/10 light:border-black/10 rounded-2xl p-6 backdrop-blur-md">
+                        <div className="aspect-video bg-linear-to-br from-emerald-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+                          <div className="text-6xl">
+                            {["🎯", "⚡", "🔄"][index]}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 5. Timeline Component
 interface TimelineProps {
@@ -558,7 +598,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ testimonial, techSpecs }) => 
                 &#34;{testimonial.quote}&#34;
               </blockquote>
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-purple-500"></div>
+                <div className="w-16 h-16 rounded-full bg-linear-to-br from-yellow-300 to-red-300"></div>
                 <div>
                   <p className="font-bold text-white dark:text-white light:text-black">{testimonial.author}</p>
                   <p className="text-gray-400 dark:text-gray-400 light:text-gray-600">{testimonial.role} at {testimonial.company}</p>
