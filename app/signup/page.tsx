@@ -193,7 +193,7 @@ export default function SignUpPage() {
     <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
 
         {/* Left Side - Branding & Benefits */}
-        <div className={`space-y-8 transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+        <div className={`space-y-8 transition-all duration-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
     <div>
         <h1 className={`text-5xl md:text-6xl font-bold ${colors.text.primary} mb-4 leading-tight`}>
     Join
@@ -215,7 +215,7 @@ export default function SignUpPage() {
 ].map((benefit, i) => (
         <div
             key={i}
-    className={`flex items-center gap-3 transition-all duration-700 delay-${(i + 1) * 100} ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
+    className={`flex items-center gap-3 transition-all duration-300 delay-${(i + 1) * 100} ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
 >
     <div className={`w-10 h-10 rounded-lg bg-${benefit.color}-500/10 border border-${benefit.color}-400/30 flex items-center justify-center text-${benefit.color}-400`}>
     {benefit.icon}
@@ -226,7 +226,7 @@ export default function SignUpPage() {
     </div>
 
     {/* Trust Indicators */}
-    <div className={`flex items-center gap-4 pt-6 transition-all duration-500 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <div className={`flex items-center gap-4 pt-6 transition-all duration-300 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
     <div className="flex -space-x-2">
     <div className={`w-10 h-10 rounded-full bg-linear-to-br from-purple-300 to-pink-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
     <div className={`w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-cyan-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
@@ -464,49 +464,50 @@ export default function SignUpPage() {
 
         {/* Action Buttons */}
         <div className="flex gap-3 mt-6">
-        <button
-            onClick={prevStep}
-        className={`flex-1 px-6 py-3 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200`}
-    >
-        Back
-        </button>
-        <button
-        onClick={handleSubmit}
-        className="
-        group flex-1 px-6 py-3
-        rounded-lg border border-emerald-400
-        text-emerald-400 font-semibold
-        bg-emerald-400/10
-        transition-all duration-300
-        hover:bg-emerald-400
-        hover:text-black
-        hover:border-emerald-400
-        flex items-center justify-center gap-2
-        "
-        >
-        Create Account
-    <Check className="w-5 h-5" />
-        </button>
-        </div>
+                <button
+                    onClick={prevStep}
+                    className={`flex-1 px-6 py-3 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200`}
+                >
+                    Back
+                </button>
+                <button
+                    onClick={handleSubmit}
+                    className="
+                group flex-1 px-6 py-3
+                rounded-lg border border-emerald-400
+                text-emerald-400 font-semibold
+                bg-emerald-400/10
+                transition-all duration-300
+                hover:bg-emerald-400
+                hover:text-black
+                hover:border-emerald-400
+                flex items-center justify-center gap-2
+                "
+                >
+                    Create Account
+                <Check className="w-5 h-5" />
+                </button>
+            </div>
         </div>
         </>
-    )}
+)}
 
-    {/* Sign In Link */}
-    <p className={`text-center text-sm ${colors.text.secondary} mt-6`}>
-    Already have an account?{' '}
-        <a href="#" className="text-emerald-400 hover:text-emerald-300 transition-colors font-semibold">
-        Sign in
-        </a>
-        </p>
 
-    {/* Security Badge */}
-    <div className={`flex items-center justify-center gap-2 mt-6 pt-6 border-t ${colors.border.primary}`}>
-    <Shield className="w-4 h-4 text-emerald-400" />
-    <span className={`text-xs ${colors.text.tertiary}`}>
-    AES-256 encrypted • SOC2 Type II certified
-    </span>
-    </div>
+            {/* Sign In Link */}
+            <p className={`text-center text-sm ${colors.text.secondary} mt-6`}>
+                Already have an account?{' '}
+                <a href="/signin" className="text-emerald-400 hover:text-emerald-300 transition-colors font-semibold">
+                    Sign in
+                </a>
+            </p>
+
+            {/* Security Badge */}
+            <div className={`flex items-center justify-center gap-2 mt-6 pt-6 border-t ${colors.border.primary}`}>
+            <Shield className="w-4 h-4 text-emerald-400" />
+                <span className={`text-xs ${colors.text.tertiary}`}>
+                AES-256 encrypted • SOC2 Type II certified
+                </span>
+            </div>
     </div>
     </div>
     </div>
