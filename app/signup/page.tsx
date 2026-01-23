@@ -1,122 +1,15 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, ArrowRight, Mail, User, Eye, EyeOff, Zap, Shield, Check, Upload } from 'lucide-react';
+import { ArrowRight, Mail, User, Eye, EyeOff, Zap, Shield, Check, Upload } from 'lucide-react';
 import { SiGithub} from 'react-icons/si';
 import { SiGoogle } from 'react-icons/si';
 import  Image  from "next/image"
+import { getColors } from '../lib/colors'
+import { ThemeToggle } from "../components/landingPage/themeToggle";
+import { FloatingParticles } from '../lib/FloatingParticle'
 
 
-// Centralized Color System (matching landing page)
-const COLORS = {
-    dark: {
-        background: {
-            primary: 'bg-black',
-            secondary: 'bg-zinc-950',
-            tertiary: 'bg-white/5',
-            gradient: 'bg-gradient-to-br from-black via-emerald-950/20 to-black',
-        },
-        text: {
-            primary: 'text-white',
-            secondary: 'text-gray-400',
-            tertiary: 'text-gray-500',
-            accent: 'text-emerald-400',
-        },
-        border: {
-            primary: 'border-white/10',
-            secondary: 'border-white/20',
-            accent: 'border-emerald-500/50',
-        },
-        hover: {
-            background: 'hover:bg-white/5',
-            border: 'hover:border-emerald-500/50',
-        },
-    },
-    light: {
-        background: {
-            primary: 'bg-white',
-            secondary: 'bg-gray-50',
-            tertiary: 'bg-black/5',
-            gradient: 'bg-gradient-to-br from-white via-emerald-50 to-white',
-        },
-        text: {
-            primary: 'text-black',
-            secondary: 'text-gray-600',
-            tertiary: 'text-gray-600',
-            accent: 'text-emerald-600',
-        },
-        border: {
-            primary: 'border-black/10',
-            secondary: 'border-black/20',
-            accent: 'border-emerald-500/30',
-        },
-        hover: {
-            background: 'hover:bg-black/5',
-            border: 'hover:border-emerald-500',
-        },
-    },
-};
-
-const getColors = (isDarkMode: boolean) => isDarkMode ? COLORS.dark : COLORS.light;
-
-// Theme Toggle Button
-interface ThemeToggleProps {
-    isDarkMode: boolean;
-    setIsDarkMode: (value: boolean) => void;
-}
-
-const ThemeToggle: React.FC<ThemeToggleProps> = ({ isDarkMode, setIsDarkMode }) => {
-    const colors = getColors(isDarkMode);
-
-    return (
-        <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-    className={`fixed top-6 right-6 z-50 p-3 rounded-lg backdrop-blur-md ${colors.background.tertiary} ${colors.border.primary} border ${colors.hover.border} transition-all duration-200 hover:scale-105`}
-    aria-label="Toggle theme"
-        >
-        {isDarkMode ? (
-                <Sun className="w-5 h-5 text-amber-400" />
-            ) : (
-                <Moon className="w-5 h-5 text-purple-600" />
-            )}
-        </button>
-);
-};
-
-// Floating Particles Component
-const FloatingParticles: React.FC = () => {
-    const particles = [
-        { left: '10%', top: '20%', duration: '3.5s', delay: '0.5s', color: 'bg-emerald-400/40' },
-        { left: '30%', top: '50%', duration: '4s', delay: '1s', color: 'bg-lime-400/40' },
-        { left: '60%', top: '10%', duration: '3.2s', delay: '0.8s', color: 'bg-yellow-400/40' },
-        { left: '80%', top: '70%', duration: '4.1s', delay: '1.2s', color: 'bg-emerald-400/40' },
-        { left: '50%', top: '40%', duration: '3.8s', delay: '0.3s', color: 'bg-lime-400/40' },
-        { left: '20%', top: '80%', duration: '4.5s', delay: '0.7s', color: 'bg-orange-400/40' },
-    ];
-
-    return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {particles.map((p, i) => (
-                    <div
-                        key={i}
-                className={`absolute w-2 h-2 rounded-full ${p.color}`}
-    style={{
-        left: p.left,
-            top: p.top,
-            animation: `float ${p.duration} ease-in-out infinite`,
-            animationDelay: p.delay,
-    }}
-></div>
-))}
-    <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-      `}</style>
-    </div>
-);
-};
 
 export default function SignUpPage() {
     const [isDarkMode, setIsDarkMode] = useState(true);
