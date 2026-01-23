@@ -1,14 +1,20 @@
 "use client"
 
 import React, {useState, useEffect} from 'react';
-import {ArrowRight, Mail, User, Eye, EyeOff, Zap, Shield, Check, Upload} from 'lucide-react';
-import {SiGithub} from 'react-icons/si';
-import {SiGoogle} from 'react-icons/si';
-import Image from "next/image"
 import {getColors} from '../lib/colors'
 
 import {FloatingParticles} from '../lib/FloatingParticle'
 import {ThemeToggle} from "@/app/components/landingPage/themeToggle";
+import {SidebarHeader} from "@/app/components/signup/SidebarHeading";
+import {Benefits} from "@/app/components/signup/Benefits";
+import {TrustIndicator} from "@/app/components/signup/TrustIndicator";
+import {FormHeader} from "@/app/components/signup/FormHeader";
+import {AuthButtons} from "@/app/components/signin/AuthButtons";
+import {SignUpDivider} from "@/app/components/signin/Divider";
+import {From_step01} from "@/app/components/signup/FormStep01";
+import {From_Step02} from "@/app/components/signup/FormStep02";
+import {RoutingLink} from "@/app/components/signin/RoutingLink";
+import {SecurityBadge} from "@/app/components/signin/SecurityBadge";
 
 
 export default function SignUpPage() {
@@ -88,58 +94,14 @@ export default function SignUpPage() {
                     {/* Left Side - Branding & Benefits */}
                     <div
                         className={`space-y-8 transition-all duration-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
-                        <div>
-                            <h1 className={`text-5xl md:text-6xl font-bold ${colors.text.primary} mb-4 leading-tight`}>
-                                Join
-                                <span
-                                    className="block bg-linear-to-r from-emerald-400 via-lime-400 to-yellow-400 bg-clip-text text-transparent">
-                                    DevFlow
-                                </span>
-                            </h1>
-                            <p className={`text-xl ${colors.text.secondary} leading-relaxed`}>
-                                Create your account and start shipping code faster.
-                            </p>
-                        </div>
+
+                        <SidebarHeader isDarkMode={isDarkMode}/>
 
                         {/* Benefits List */}
-                        <div className="space-y-4">
-                            {[
-                                {icon: <Zap className="w-5 h-5"/>, text: "Set up in under 2 minutes", color: "emerald"},
-                                {icon: <Shield className="w-5 h-5"/>, text: "Enterprise-grade security", color: "lime"},
-                                {
-                                    icon: <Check className="w-5 h-5"/>,
-                                    text: "14-day free trial included",
-                                    color: "yellow"
-                                }
-                            ].map((benefit, i) => (
-                                <div
-                                    key={i}
-                                    className={`flex items-center gap-3 transition-all duration-300 delay-${(i + 1) * 100} ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
-                                >
-                                    <div
-                                        className={`w-10 h-10 rounded-lg bg-${benefit.color}-500/10 border border-${benefit.color}-400/30 flex items-center justify-center text-${benefit.color}-400`}>
-                                        {benefit.icon}
-                                    </div>
-                                    <span className={`${colors.text.secondary} font-medium`}>{benefit.text}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <Benefits isVisible={isVisible} isDarkMode={isDarkMode}/>
 
                         {/* Trust Indicators */}
-                        <div
-                            className={`flex items-center gap-4 pt-6 transition-all duration-300 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            <div className="flex -space-x-2">
-                                <div
-                                    className={`w-10 h-10 rounded-full bg-linear-to-br from-purple-300 to-pink-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
-                                <div
-                                    className={`w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-cyan-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
-                                <div
-                                    className={`w-10 h-10 rounded-full bg-linear-to-br from-orange-500 to-red-500 border-2 ${isDarkMode ? 'border-black' : 'border-white'}`}></div>
-                            </div>
-                            <p className={`text-sm ${colors.text.tertiary}`}>
-                                Join 5,000+ developers worldwide
-                            </p>
-                        </div>
+                        <TrustIndicator isVisible={isVisible} isDarkMode={isDarkMode}/>
                     </div>
 
                     {/* Right Side - Sign-Up Form */}
@@ -151,307 +113,57 @@ export default function SignUpPage() {
                                 className={`relative ${colors.background.tertiary} backdrop-blur-xl border ${colors.border.primary} rounded-2xl p-8 shadow-2xl`}>
 
                                 {/* Header */}
-                                <div className="text-center mb-8">
-                                    <h2 className={`text-3xl font-bold ${colors.text.primary} mb-2`}>Create Account</h2>
-                                    <p className={`${colors.text.secondary}`}>
-                                        Step {currentStep} of 2 - {currentStep === 1 ? 'Basic Info' : 'Profile Setup'}
-                                    </p>
-
-                                    {/* Progress Bar */}
-                                    <div className="relative mt-8 mb-4 mx-20">
-                                        {/* Line connecting circles */}
-                                        <div className={`absolute top-1/2 left-0 right-0 h-0.5 ${colors.border.primary} -translate-y-1/2`}></div>
-
-                                        {/* Active progress line */}
-                                        <div
-                                            className="absolute top-1/2 left-0 h-0.5 bg-emerald-400 -translate-y-1/2 transition-all duration-500"
-                                            style={{ width: currentStep === 1 ? '0%' : '50%' }}
-                                        ></div>
-
-                                        {/* Step circles */}
-                                        <div className="relative flex justify-between items-center">
-                                            {[1, 2].map((step) => (
-                                                <div
-                                                    key={step}
-                                                    className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-lg transition-all duration-500 ${
-                                                        currentStep >= step
-                                                            ? 'border-emerald-400 bg-emerald-400/10 text-emerald-400'
-                                                            : `${colors.border.primary} ${colors.background.tertiary} ${colors.text.tertiary}`
-                                                    }`}
-                                                >
-                                                    {step}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
+                                <FormHeader
+                                    isDarkMode={isDarkMode}
+                                    currentStep={currentStep}
+                                />
 
                                 {currentStep === 1 ? (
                                     <>
                                         {/* OAuth Buttons */}
-                                        <div className="space-y-3 mb-6">
-                                            <button
-                                                className={`w-full px-6 py-3 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200 flex items-center justify-center gap-3`}>
-                                                <SiGithub className="w-5 h-5"/>
-                                                Continue with Github
-                                            </button>
-
-                                            <button
-                                                className={`w-full px-6 py-3 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200 flex items-center justify-center gap-3`}>
-                                                <SiGoogle className="w-5 h-5"/>
-                                                Continue with Google
-                                            </button>
-                                        </div>
+                                        <AuthButtons isDarkMode={isDarkMode}/>
 
                                         {/* Divider */}
-                                        <div className="relative mb-6">
-                                            <div className={`absolute inset-0 flex items-center`}>
-                                                <div className={`w-full border-t ${colors.border.primary}`}></div>
-                                            </div>
-                                            <div className="relative flex justify-center text-sm">
-                                                <span className={`px-4 ${colors.background.tertiary} ${colors.text.tertiary}`}>
-                                                    or continue with email
-                                                </span>
-                                            </div>
-                                        </div>
+                                        <SignUpDivider isDarkMode={isDarkMode}/>
 
                                         {/* Step 1 Form */}
-                                        <div className="space-y-4">
-                                            {/* Full Name Input */}
-                                            <div>
-                                                <label
-                                                    className={`block text-sm font-semibold ${colors.text.secondary} mb-2`}>
-                                                    Full Name *
-                                                </label>
-                                                <div className="relative">
-                                                    <User
-                                                        className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${colors.text.tertiary}`}/>
-                                                    <input
-                                                        type="text"
-                                                        value={fullName}
-                                                        onChange={(e) => setFullName(e.target.value)}
-                                                        placeholder="John Doe"
-                                                        className={`w-full pl-11 pr-4 py-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.text.primary} placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all`}
-                                                        required
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* Email Input */}
-                                            <div>
-                                                <label
-                                                    className={`block text-sm font-semibold ${colors.text.secondary} mb-2`}>
-                                                    Email Address *
-                                                </label>
-                                                <div className="relative">
-                                                    <Mail
-                                                        className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${colors.text.tertiary}`}/>
-                                                    <input
-                                                        type="email"
-                                                        value={email}
-                                                        onChange={(e) => setEmail(e.target.value)}
-                                                        placeholder="you@company.com"
-                                                        className={`w-full pl-11 pr-4 py-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.text.primary} placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all`}
-                                                        required
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* Password Input */}
-                                            <div>
-                                                <label
-                                                    className={`block text-sm font-semibold ${colors.text.secondary} mb-2`}>
-                                                    Password *
-                                                </label>
-                                                <div className="relative">
-                                                    <input
-                                                        type={showPassword ? "text" : "password"}
-                                                        value={password}
-                                                        onChange={(e) => setPassword(e.target.value)}
-                                                        placeholder="••••••••"
-                                                        className={`w-full pl-4 pr-12 py-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.text.primary} placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all`}
-                                                        required
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                        className={`absolute right-3 top-1/2 -translate-y-1/2 ${colors.text.tertiary} hover:text-emerald-400 transition-colors`}
-                                                    >
-                                                        {showPassword ? <EyeOff className="w-5 h-5"/> :
-                                                            <Eye className="w-5 h-5"/>}
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {/* Next Button */}
-                                            <button
-                                                onClick={nextStep}
-                                                disabled={!fullName || !email || !password}
-                                                className="
-        group w-full px-6 py-3 mt-6
-        rounded-lg border border-emerald-400
-        text-emerald-400 font-semibold
-        bg-emerald-400/10
-        transition-all duration-300
-        hover:bg-emerald-400
-        hover:text-black
-        hover:border-emerald-400
-        disabled:opacity-50
-        disabled:cursor-not-allowed
-        disabled:hover:bg-emerald-400/10
-        disabled:hover:text-emerald-400
-        flex items-center justify-center gap-2
-        "
-                                            >
-                                                Continue
-                                                <ArrowRight
-                                                    className="w-5 h-5 transition-transform group-hover:translate-x-1"/>
-                                            </button>
-                                        </div>
+                                        <From_step01
+                                            email={email} setEmail={setEmail}
+                                            nextStep={nextStep}
+                                            isDarkMode={isDarkMode}
+                                            fullName={fullName} setFullName={setFullName}
+                                            password={password} setPassword={setPassword}
+                                            showPassword={showPassword} setShowPassword={setShowPassword}
+                                        />
                                     </>
                                 ) : (
+
                                     <>
                                         {/* Step 2 Form */}
-                                        <div className="space-y-4">
-                                            {/* Profile Image Upload */}
-                                            <div>
-                                                <label
-                                                    className={`block text-sm font-semibold ${colors.text.secondary} mb-2`}>
-                                                    Profile Picture (Optional)
-                                                </label>
-                                                <div className="flex items-center gap-4">
-                                                    <div
-                                                        className={`w-20 h-20 rounded-full ${colors.background.tertiary} border ${colors.border.primary} flex items-center justify-center overflow-hidden`}>
-                                                        {imagePreview ? (
-                                                            <Image src={imagePreview} alt="Preview"
-                                                                   className="w-full h-full object-cover"/>
-                                                        ) : (
-                                                            <User className={`w-8 h-8 ${colors.text.tertiary}`}/>
-                                                        )}
-                                                    </div>
-                                                    <label
-                                                        className={`cursor-pointer px-4 py-2 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200 flex items-center gap-2`}>
-                                                        <Upload className="w-4 h-4"/>
-                                                        Upload
-                                                        <input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            onChange={handleImageUpload}
-                                                            className="hidden"
-                                                        />
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            {/* Role Selection */}
-                                            <div>
-                                                <label
-                                                    className={`block text-sm font-semibold ${colors.text.secondary} mb-2`}>
-                                                    Your Role (Optional)
-                                                </label>
-                                                <select
-                                                    value={role}
-                                                    onChange={(e) => setRole(e.target.value)}
-                                                    className={`w-full px-4 py-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.text.primary} focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all`}
-                                                >
-                                                    <option value="developer">Developer</option>
-                                                    <option value="designer">Designer</option>
-                                                    <option value="product-manager">Product Manager</option>
-                                                    <option value="engineer">Engineer</option>
-                                                    <option value="other">Other</option>
-                                                </select>
-                                            </div>
-
-                                            {/* GitHub Repo */}
-                                            <div>
-                                                <label
-                                                    className={`block text-sm font-semibold ${colors.text.secondary} mb-2`}>
-                                                    GitHub Repository (Optional)
-                                                </label>
-                                                <div className="relative">
-                                                    <SiGithub
-                                                        className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${colors.text.tertiary}`}/>
-                                                    <input
-                                                        type="text"
-                                                        value={githubRepo}
-                                                        onChange={(e) => setGithubRepo(e.target.value)}
-                                                        placeholder="username/repository"
-                                                        className={`w-full pl-11 pr-4 py-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.text.primary} placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all`}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* Checkboxes */}
-                                            <div className="space-y-3">
-                                                <label className="flex items-center gap-3 cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isOwner}
-                                                        onChange={(e) => setIsOwner(e.target.checked)}
-                                                        className="w-4 h-4 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500/20"
-                                                    />
-                                                    <span className={`text-sm ${colors.text.secondary}`}>I&#39;m a project owner</span>
-                                                </label>
-
-                                                <label className="flex items-center gap-3 cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isManager}
-                                                        onChange={(e) => setIsManager(e.target.checked)}
-                                                        className="w-4 h-4 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500/20"
-                                                    />
-                                                    <span className={`text-sm ${colors.text.secondary}`}>I&#39;m a team manager</span>
-                                                </label>
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            <div className="flex gap-3 mt-6">
-                                                <button
-                                                    onClick={prevStep}
-                                                    className={`flex-1 px-6 py-3 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200`}
-                                                >
-                                                    Back
-                                                </button>
-                                                <button
-                                                    onClick={handleSubmit}
-                                                    className="
-                group flex-1 px-6 py-3
-                rounded-lg border border-emerald-400
-                text-emerald-400 font-semibold
-                bg-emerald-400/10
-                transition-all duration-300
-                hover:bg-emerald-400
-                hover:text-black
-                hover:border-emerald-400
-                flex items-center justify-center gap-2
-                "
-                                                >
-                                                    Create Account
-                                                    <Check className="w-5 h-5"/>
-                                                </button>
-                                            </div>
-                                        </div>
+                                        <From_Step02
+                                            isDarkMode={isDarkMode}
+                                            imagePreview={imagePreview}
+                                            role={role} setRole={setRole}
+                                            githubRepo={githubRepo}
+                                            setGithubRepo={setGithubRepo}
+                                            isOwner={isOwner}
+                                            setIsOwner={setIsOwner}
+                                            isManager={isManager}
+                                            setIsManager={setIsManager}
+                                            prevStep={prevStep}
+                                            handleImageUpload={handleImageUpload}
+                                            handleSubmit={handleSubmit}
+                                        />
                                     </>
                                 )}
 
 
-                                {/* Sign In Link */}
-                                <p className={`text-center text-sm ${colors.text.secondary} mt-6`}>
-                                    Already have an account?{' '}
-                                    <a href="/signin"
-                                       className="text-emerald-400 hover:text-emerald-300 transition-colors font-semibold">
-                                        Sign in
-                                    </a>
-                                </p>
+                                {/* Signup Link */}
+                                <RoutingLink isDarkMode={isDarkMode} link={"/signin"}/>
 
                                 {/* Security Badge */}
-                                <div
-                                    className={`flex items-center justify-center gap-2 mt-6 pt-6 border-t ${colors.border.primary}`}>
-                                    <Shield className="w-4 h-4 text-emerald-400"/>
-                                    <span className={`text-xs ${colors.text.tertiary}`}>
-                                        AES-256 encrypted • SOC2 Type II certified
-                                    </span>
-                                </div>
+                                <SecurityBadge isDarkMode={isDarkMode}/>
+
                             </div>
                         </div>
                     </div>
