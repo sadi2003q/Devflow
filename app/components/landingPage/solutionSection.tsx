@@ -4,7 +4,7 @@
 // Solution Section Component
 import React from "react";
 import {getColors, useInView} from "@/app/components/landingPage/visual";
-import {Check, GitBranch, Shield, Zap} from "lucide-react";
+import {Check} from "lucide-react";
 
 interface BenefitProps {
     title: string;
@@ -22,18 +22,6 @@ export const SolutionSection: React.FC<{ benefits: BenefitProps[], isDarkMode: b
     const colors = getColors(isDarkMode);
     const title = useInView<HTMLHeadingElement>();
     const subtitle = useInView<HTMLParagraphElement>();
-
-
-    const particles = [
-        { left: '10%', top: '20%', duration: '3.5s', delay: '0.5s', color: 'bg-emerald-400/40' },
-        { left: '30%', top: '50%', duration: '4s', delay: '1s', color: 'bg-orange-400/40' },
-        { left: '60%', top: '10%', duration: '3.2s', delay: '0.8s', color: 'bg-lime-400/40' },
-        { left: '80%', top: '70%', duration: '4.1s', delay: '1.2s', color: 'bg-emerald-400/40' },
-        { left: '50%', top: '40%', duration: '3.8s', delay: '0.3s', color: 'bg-orange-400/40' },
-        { left: '20%', top: '80%', duration: '4.5s', delay: '0.7s', color: 'bg-lime-400/40' },
-    ];
-
-
     return (
         <section className={`py-32 px-6 ${colors.background.secondary}`}>
             <div className="max-w-7xl mx-auto">
