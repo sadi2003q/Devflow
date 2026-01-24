@@ -72,34 +72,6 @@ const stats = [
     { label: 'Avg Response Time', value: '2.4h', change: '-0.5h', icon: <Clock className="w-5 h-5" />, color: 'yellow' },
 ];
 
-const CalendarGrid = ({ currentDate = 24 }) => {
-    // Example month array with nulls at start
-    const dates = [
-        null, null, null, 1, 2, 3, 4,
-        5, 6, 7, 8, 9, 10, 11,
-        12, 13, 14, 15, 16, 17, 18,
-        19, 20, 21, 22, 23, 24, 25,
-        26, 27, 28, 29, 30, 31
-    ];
-
-    return (
-        <div className="grid grid-cols-7 gap-2">
-            {dates.map((date, i) => (
-                <div
-                    key={i}
-                    className={`
-            aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200
-            ${date === null ? "" : date === currentDate
-                        ? "bg-emerald-400 text-black"
-                        : "text-gray-700 hover:bg-gray-300 cursor-pointer dark:text-gray-200 dark:hover:bg-gray-700"}
-          `}
-                >
-                    {date}
-                </div>
-            ))}
-        </div>
-    );
-};
 
 export default function Dashboard() {
     const [isDarkMode, setIsDarkMode] = useState(true);
