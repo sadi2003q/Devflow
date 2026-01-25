@@ -18,6 +18,7 @@ import {ProjectSection} from "@/app/components/dashboard/ProjectSection";
 import {CalendarWidget} from "@/app/components/dashboard/CalendarWidget";
 import {UpcomingTask_Section} from "@/app/components/dashboard/UpcomingTask";
 import {ActivityChart} from "@/app/components/dashboard/ActivityChart";
+import {WelcomeBoard} from "@/app/components/dashboard/WelcomeBoard";
 
 
 
@@ -68,14 +69,12 @@ export default function Dashboard() {
                 <nav
                     className={`sticky top-0 z-20 ${colors.background.secondary} border-b ${colors.border.primary} backdrop-blur-xl bg-opacity-80`}>
                     <div className="px-6 py-4 flex items-center justify-between">
-                        <div className=" flex items-center gap-4">
                             <SidebarButton_Tab
                                 isDarkMode={isDarkMode}
                                 sidebarOpen={sidebarOpen}
                                 setSidebarOpen={setSidebarOpen}/>
 
                             <SearchComponent isDarkMode={isDarkMode}/>
-                        </div>
 
                         {/*   navigation bar items  */}
                         <div className="flex items-center gap-4">
@@ -94,13 +93,7 @@ export default function Dashboard() {
                 {/* Dashboard Content */}
                 <main className="p-4 md:p-6">
                     {/* Header */}
-                    <div
-                        className={`mb-6 md:mb-8 transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                        <h2 className={`text-2xl md:text-3xl font-bold ${colors.text.primary} mb-2`}>Opening
-                            Dashboard</h2>
-                        <p className={`text-sm md:text-base ${colors.text.secondary}`}>Welcome back! Here&#39;s
-                            what&#39;s happening with your projects today.</p>
-                    </div>
+                    <WelcomeBoard isVisible={isVisible} isDarkMode={isDarkMode}/>
 
                     {/* Stats Grid */}
                     <StartGrid isDarkMode={isDarkMode} isVisible={isVisible}/>
