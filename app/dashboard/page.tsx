@@ -2,68 +2,122 @@
 
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun, Bell, Search, Plus, Clock, CheckCircle, Users, GitBranch, Calendar, Activity, ChevronRight, Settings, LogOut, Menu, X } from 'lucide-react';
+import {getColors} from "@/app/lib/colors";
+import {PROJECT} from "@/types/project.type";
+import {STATUS, TASK} from "@/types/task.type";
+import {PRIORITIES} from "@/types/subtask.type";
 
-// Centralized Color System
-const COLORS = {
-    dark: {
-        background: {
-            primary: 'bg-black',
-            secondary: 'bg-zinc-950',
-            tertiary: 'bg-white/5',
-        },
-        text: {
-            primary: 'text-white',
-            secondary: 'text-gray-400',
-            tertiary: 'text-gray-500',
-            accent: 'text-emerald-400',
-        },
-        border: {
-            primary: 'border-white/10',
-            secondary: 'border-white/20',
-        },
-        hover: {
-            background: 'hover:bg-white/5',
-            border: 'hover:border-emerald-500/50',
-        },
-    },
-    light: {
-        background: {
-            primary: 'bg-white',
-            secondary: 'bg-gray-50',
-            tertiary: 'bg-black/5',
-        },
-        text: {
-            primary: 'text-black',
-            secondary: 'text-gray-600',
-            tertiary: 'text-gray-500',
-            accent: 'text-emerald-600',
-        },
-        border: {
-            primary: 'border-black/10',
-            secondary: 'border-black/20',
-        },
-        hover: {
-            background: 'hover:bg-black/5',
-            border: 'hover:border-emerald-500',
-        },
-    },
-};
 
-const getColors = (isDarkMode: boolean) => isDarkMode ? COLORS.dark : COLORS.light;
 
 // Mock Data
-const projects = [
-    { id: 1, name: 'DevFlow Platform', description: 'AI-powered workflow automation', createdBy: 'Sarah Chen', status: 'active', progress: 75 },
-    { id: 2, name: 'Mobile App Redesign', description: 'UI/UX modernization project', createdBy: 'Mike Johnson', status: 'active', progress: 45 },
-    { id: 3, name: 'API Integration', description: 'Third-party service integration', createdBy: 'Alex Kumar', status: 'review', progress: 90 },
+const projects: PROJECT[] = [
+    {
+        ID: "uid123",
+        name: 'DevFlow Platform',
+        description: 'AI-powered workflow automation',
+        createdBy: 'Sarah Chen',
+        createdAt: new Date('2024-01-15'),
+        GithubRepo: 'https://github.com/org/devflow-platform',
+        ownerID: 'user_001',
+        managerID: 'manager_001',
+        teamMembers: [],
+        completionDate: new Date('2024-12-31'),
+    },
+    {
+        ID: "uid2",
+        name: 'Mobile App Redesign',
+        description: 'UI/UX modernization project',
+        createdBy: 'Mike Johnson',
+        createdAt: new Date('2024-02-10'),
+        ownerID: 'user_005',
+        managerID: 'manager_002',
+        teamMembers: [],
+        completionDate: new Date('2024-10-15'),
+    },
+    {
+        ID: "uid3",
+        name: 'API Integration',
+        description: 'Third-party service integration',
+        createdBy: 'Alex Kumar',
+        createdAt: new Date('2024-03-05'),
+        GithubRepo: 'https://github.com/org/api-integration',
+        ownerID: 'user_008',
+        managerID: 'manager_003',
+        teamMembers: [],
+        completionDate: new Date('2024-08-30'),
+    },
 ];
 
-const upcomingTasks = [
-    { id: 1, title: 'Review PR #234', time: '2 hours', priority: 'high' },
-    { id: 2, title: 'Team standup meeting', time: '4 hours', priority: 'medium' },
-    { id: 3, title: 'Deploy to staging', time: 'Tomorrow', priority: 'high' },
-    { id: 4, title: 'Update documentation', time: 'Tomorrow', priority: 'low' },
+
+const upcomingTasks: TASK[] = [
+    {
+        projectID: "proj_001",
+        taskID: "task_001",
+        title: "review Project Report",
+        content: "Review PR #234",
+        createdAt: new Date(),
+        submissionDate: new Date(Date.now() + 2 * 60 * 60 * 1000),
+        createdBy: "user_001",
+        assignedTo: [
+            {
+                userID: "user_002",
+                joinedAt: new Date("2024-01-10"),
+                Role: "Developer",
+            },
+        ],
+        priority: PRIORITIES.High,
+        status: STATUS.WORKING,
+        subtask: [
+            {
+                TaskID: "task_001",
+                SubText: "Check code quality",
+                priority: PRIORITIES.Medium,
+            },
+        ],
+        isComplete: false,
+        workQuality: null,
+    },
+    {
+        projectID: "proj_001",
+        taskID: "task_002",
+        title: "Important Meeting",
+        content: "Team standup meeting",
+        createdAt: new Date(),
+        submissionDate: new Date(Date.now() + 4 * 60 * 60 * 1000),
+        createdBy: "user_003",
+        assignedTo: [], // ✅ allowed
+        priority: PRIORITIES.Medium,
+        status: STATUS.PENDING,
+        isComplete: false,
+        workQuality: null,
+    },
+    {
+        projectID: "proj_002",
+        taskID: "task_003",
+        title: "Deploy to staging",
+        content: "Deploy to staging",
+        createdAt: new Date(),
+        submissionDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        createdBy: "user_004",
+        assignedTo: [
+            {
+                userID: "user_005",
+                joinedAt: new Date("2024-02-01"),
+                Role: "DevOps",
+            },
+            {
+                userID: "user_006",
+                joinedAt: new Date("2024-02-03"),
+                Role: "Backend Engineer",
+            },
+        ],
+        priority: PRIORITIES.High,
+        status: STATUS.PENDING,
+        isComplete: false,
+        workQuality: null,
+    },
 ];
+
 
 const stats = [
     { label: 'Active Projects', value: '12', change: '+2', icon: <GitBranch className="w-5 h-5" />, color: 'emerald' },
@@ -78,6 +132,14 @@ export default function Dashboard() {
     const [isVisible, setIsVisible] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const colors = getColors(isDarkMode);
+
+
+    const date = new Date(); // or any date you want
+
+    const monthYear = date.toLocaleString('default', {
+        month: 'long',
+        year: 'numeric',
+    });
 
     useEffect(() => {
         const changeVisibility = () => {
@@ -229,23 +291,13 @@ export default function Dashboard() {
 
                                 <div className="space-y-4">
                                     {projects.map((project) => (
-                                        <div key={project.id} className={`${colors.background.tertiary} border ${colors.border.primary} rounded-lg p-4 ${colors.hover.border} transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]`}>
+                                        <div key={project.ID} className={`${colors.background.tertiary} border ${colors.border.primary} rounded-lg p-4 ${colors.hover.border} transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]`}>
                                             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
                                                 <div className="flex-1">
                                                     <h4 className={`text-lg font-semibold ${colors.text.primary} mb-2`}>{project.name}</h4>
                                                     <p className={`text-sm ${colors.text.secondary} leading-relaxed`}>{project.description}</p>
                                                 </div>
-                                                <span className={`self-start px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                                                    project.status === 'active'
-                                                        ? isDarkMode
-                                                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-400/30'
-                                                            : 'bg-emerald-500 text-white border border-emerald-500'
-                                                        : isDarkMode
-                                                            ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-400/30'
-                                                            : 'bg-yellow-500 text-white border border-yellow-500'
-                                                }`}>
-                                                    {project.status}
-                                                </span>
+
                                             </div>
 
                                             <div className="pt-3 border-t border-white/10">
@@ -268,7 +320,7 @@ export default function Dashboard() {
                                 <div className={`rounded-lg p-4`}>
                                     {/* Calendar Header */}
                                     <div className={`text-center mb-4 pb-3 border-b ${colors.border.primary}`}>
-                                        <div className={`text-lg font-bold ${colors.text.primary}`}>January 2026</div>
+                                        <div className={`text-lg font-bold ${colors.text.primary}`}>{monthYear}</div>
                                     </div>
 
                                     {/* Day Names */}
@@ -314,14 +366,14 @@ export default function Dashboard() {
                                 </div>
                                 <div className="space-y-3">
                                     {upcomingTasks.map((task) => (
-                                        <div key={task.id} className={`flex items-center gap-3 p-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.hover.border} transition-all duration-200`}>
+                                        <div key={task.taskID} className={`flex items-center gap-3 p-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.hover.border} transition-all duration-200`}>
                                             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
                                                 task.priority === 'high' ? 'bg-red-400' :
                                                     task.priority === 'medium' ? 'bg-yellow-400' : 'bg-emerald-400'
                                             }`}></div>
                                             <div className="flex-1 min-w-0">
                                                 <p className={`text-sm font-medium ${colors.text.primary} truncate`}>{task.title}</p>
-                                                <p className={`text-xs ${colors.text.tertiary}`}>{task.time}</p>
+                                                <p className={`text-xs ${colors.text.tertiary}`}> {task.createdAt.toLocaleDateString()}</p>
                                             </div>
                                             <ChevronRight className={`w-4 h-4 ${colors.text.tertiary} flex-shrink-0`} />
                                         </div>
@@ -357,6 +409,7 @@ export default function Dashboard() {
                             ))}
                         </div>
                     </div>
+
                 </main>
             </div>
         </div>
