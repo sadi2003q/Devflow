@@ -26,15 +26,29 @@ export const UpcomingTask_Section = (
                 {upcomingTasks.map((task) => (
                     <div key={task.taskID}
                          className={`flex items-center gap-3 p-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.hover.border} transition-all duration-200`}>
-                        <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                        <div className={`w-2 h-2 rounded-full shrink-0 ${
                             task.priority === 'high' ? 'bg-red-400' :
                                 task.priority === 'medium' ? 'bg-yellow-400' : 'bg-emerald-400'
                         }`}></div>
                         <div className="flex-1 min-w-0">
-                            <p className={`text-sm font-medium ${colors.text.primary} truncate`}>{task.title}</p>
-                            <p className={`text-xs ${colors.text.tertiary}`}> {task.createdAt.toLocaleDateString()}</p>
+                            <p
+                                className={`text-sm font-medium ${colors.text.primary} truncate`}
+                                title={task.title}
+                            >
+                                {task.title}
+                            </p>
+
+                            <p className={`text-xs ${colors.text.tertiary} truncate`}>
+                                {new Date(task.createdAt).toLocaleDateString("en-US", {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                })}
+                            </p>
+
                         </div>
-                        <ChevronRight className={`w-4 h-4 ${colors.text.tertiary} flex-shrink-0`}/>
+
+                        <ChevronRight className={`w-4 h-4 ${colors.text.tertiary} shrink-0`}/>
                     </div>
                 ))}
             </div>

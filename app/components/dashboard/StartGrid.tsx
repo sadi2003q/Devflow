@@ -12,8 +12,8 @@ type IStartGrid = {
 const stats = [
     {label: 'Active Projects', value: '12', change: '+2', icon: <GitBranch className="w-5 h-5"/>, color: 'emerald'},
     {label: 'Tasks Completed', value: '48', change: '+12', icon: <CheckCircle className="w-5 h-5"/>, color: 'emerald'},
-    {label: 'Team Members', value: '24', change: '+3', icon: <Users className="w-5 h-5"/>, color: 'yellow'},
-    {label: 'Avg Response Time', value: '2.4h', change: '-0.5h', icon: <Clock className="w-5 h-5"/>, color: 'yellow'},
+    {label: 'Team Members', value: '24', change: '+3', icon: <Users className="w-5 h-5"/>, color: 'emerald'},
+    {label: 'Avg Response Time', value: '2.4h', change: '-0.5h', icon: <Clock className="w-5 h-5"/>, color: 'emerald'},
 ];
 
 
