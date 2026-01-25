@@ -6,6 +6,7 @@ import {getColors} from "@/app/lib/colors";
 import {PROJECT} from "@/types/project.type";
 import {TASK} from "@/types/task.type";
 import {p, upcomingTask} from "@/mock/dashboard";
+import {monthYear} from '@/app/lib/constants'
 
 
 const stats = [
@@ -18,27 +19,24 @@ const stats = [
 
 export default function Dashboard() {
 
-    // =============   STATE VARIABLES =============
+    // =============   STATE VARIABLES  =============
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const colors = getColors(isDarkMode);
 
-    // =============   MOCK dATA =============
+
+    // =============   MOCK DATA   =============
     // FIXME: setState is not intialised for these variables
     const [projects, ] = useState<PROJECT[]>(p)
     const [upcomingTasks, ] = useState<TASK[]>(upcomingTask)
 
 
+    // =============   MOCK DATA   =============
+    const colors = getColors(isDarkMode);
 
 
-    const date = new Date(); // or any date you want
 
-    const monthYear = date.toLocaleString('default', {
-        month: 'long',
-        year: 'numeric',
-    });
-
+    // =============   HOOK's   =============
     useEffect(() => {
         const changeVisibility = () => {
             setIsVisible(true);
