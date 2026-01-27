@@ -17,6 +17,8 @@ import {RoutingLink} from "@/app/components/signin/RoutingLink";
 import {SecurityBadge} from "@/app/components/signin/SecurityBadge";
 
 import axios from "axios";
+import {useRouter} from "next/navigation";
+import { toast } from "react-hot-toast";
 
 
 export default function SignUpPage() {
@@ -39,6 +41,7 @@ export default function SignUpPage() {
     const [imagePreview, setImagePreview] = useState('');
 
     const colors = getColors(isDarkMode);
+    const router = useRouter();
 
 
 
@@ -70,20 +73,27 @@ export default function SignUpPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        try {
+            const userData = {
+                name: fullName,
+                email: email,
+                password: password,          // ✅ ADD THIS
+                imageURL: imageURL,
+                projects: [],
+                role: role,
+                isOwner: isOwner,
+                isManager: isManager,
+                githubRepo: githubRepo,
+            };
 
-        const userData = {
-            name: fullName,
-            email: email,
-            imageURL: imageURL,
-            joinedAt: new Date(),
-            projects: [],
-            role: role,
-            isOwner: isOwner,
-            isManager: isManager,
-            githubRepo: githubRepo,
-        };
+            await axios.post('/api/users/signup', userData)
+            router.push('/dashboard')
+        } catch (error) {
+            toast.error("Error signing up");
+            console.log(error);
+        }
 
-        await axios.post('/api/users/signup', userData)
+
     };
 
     const nextStep = () => {

@@ -3,24 +3,11 @@
 import {NextResponse, NextRequest} from 'next/server'
 
 
-export function apiAuthMiddleware(req: NextRequest) {
-    const token = req.cookies.get("auth")?.value;
-
-    if (!token) {
-        return NextResponse.json(
-            { error: "Unauthorized" },
-            { status: 401 }
-        );
-    }
-
-    // you can also add role-based logic here
-    return NextResponse.next();
-}
 
 
 function authMiddleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
-    const token = request.cookies.get("auth")?.value;
+    const token = request.cookies.get("token")?.value;
 
     const publicRoutes = ['/', '/signin', '/signup'];
     const isPublicRoute = publicRoutes.includes(path);

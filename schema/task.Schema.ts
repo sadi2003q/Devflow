@@ -43,7 +43,7 @@ const TaskSchema = new mongoose.Schema(
             enum: ["todo", "in-progress", "done"],
             default: "todo"
         },
-        subtask: [{ type: Types.ObjectId, ref: "Subtask" }],
+        // subtask: [{ type: Types.ObjectId, ref: "Subtask" }],
         isComplete: {
             type: Boolean,
             default: false
