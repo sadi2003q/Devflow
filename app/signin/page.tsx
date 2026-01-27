@@ -2,7 +2,7 @@
 
 import React, {useState, useEffect} from 'react';
 
-import {FloatingParticles} from '../lib/FloatingParticle'
+import {FloatingParticles} from '@/lib/FloatingParticle'
 import {getColors} from '../components/signin/colors'
 import {ThemeToggle} from "../components/landingPage/themeToggle";
 import {SidebarHeading} from "@/app/components/signin/Sidebar-Heading";

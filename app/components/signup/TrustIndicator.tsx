@@ -1,5 +1,5 @@
 import React from "react";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 type ITrustIndicatorProps = {
     isDarkMode: boolean;

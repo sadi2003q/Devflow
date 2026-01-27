@@ -1,6 +1,6 @@
 import {p} from "@/mock/dashboard";
 import React from "react";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 type IUserInformation = {
     isDarkMode: boolean;

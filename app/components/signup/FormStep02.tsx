@@ -2,7 +2,7 @@ import Image from "next/image";
 import {Check, Upload, User} from "lucide-react";
 import {SiGithub} from "react-icons/si";
 import React from "react";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 
 type IForm_Step02 = {

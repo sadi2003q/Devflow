@@ -2,7 +2,7 @@ import {Plus} from "lucide-react";
 import {p} from "@/mock/dashboard";
 import React from "react";
 import {PROJECT} from "@/types/project.type";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 
 type IProjectSection = {

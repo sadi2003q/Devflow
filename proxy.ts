@@ -3,6 +3,20 @@
 import {NextResponse, NextRequest} from 'next/server'
 
 
+export function apiAuthMiddleware(req: NextRequest) {
+    const token = req.cookies.get("auth")?.value;
+
+    if (!token) {
+        return NextResponse.json(
+            { error: "Unauthorized" },
+            { status: 401 }
+        );
+    }
+
+    // you can also add role-based logic here
+    return NextResponse.next();
+}
+
 
 function authMiddleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
@@ -10,6 +24,7 @@ function authMiddleware(request: NextRequest) {
 
     const publicRoutes = ['/', '/signin', '/signup'];
     const isPublicRoute = publicRoutes.includes(path);
+
 
     // 🚫 Not logged in → block private routes
     if (!token && !isPublicRoute) {
@@ -44,7 +59,6 @@ export const config = {
         '/profile/:path*',
         '/dashboard/:path*',
         '/admin/:path*',
-        '/api/:path*',
         '/signin',
         '/signup'
     ]

@@ -1,7 +1,7 @@
 "use client"
 
 import React, {useState, useEffect} from 'react';
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 import {PROJECT} from "@/types/project.type";
 import {TASK} from "@/types/task.type";
 import {p, upcomingTask} from "@/mock/dashboard";

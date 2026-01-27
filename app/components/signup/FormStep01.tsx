@@ -1,6 +1,6 @@
 import {ArrowRight, Eye, EyeOff, Mail, User} from "lucide-react";
 import React from "react";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 type IFrom_step01 = {
     isDarkMode: boolean;

@@ -1,6 +1,6 @@
 import {Check, Shield, Zap} from "lucide-react";
 import React from "react";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 
 type IBenefitList = {

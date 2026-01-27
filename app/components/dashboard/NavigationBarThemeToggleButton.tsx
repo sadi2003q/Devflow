@@ -1,6 +1,6 @@
 import {Moon, Sun} from "lucide-react";
 import React from "react";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 type INavigationBarThemeToggleButton = {
     isDarkMode: boolean;

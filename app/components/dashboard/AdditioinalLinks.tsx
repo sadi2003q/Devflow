@@ -1,6 +1,6 @@
 import {Activity, Calendar, CheckCircle, GitBranch, LogOut, Settings, Users} from "lucide-react";
 import React from "react";
-import {getColors} from "@/app/lib/colors";
+import {getColors} from "@/lib/colors";
 
 type IAdditionalLinks = {
     isDarkMode: boolean;

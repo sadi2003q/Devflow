@@ -1,9 +1,9 @@
 "use client"
 
 import React, {useState, useEffect} from 'react';
-import {getColors} from '../lib/colors'
+import {getColors} from '@/lib/colors'
 
-import {FloatingParticles} from '../lib/FloatingParticle'
+import {FloatingParticles} from '@/lib/FloatingParticle'
 import {ThemeToggle} from "@/app/components/landingPage/themeToggle";
 import {SidebarHeader} from "@/app/components/signup/SidebarHeading";
 import {Benefits} from "@/app/components/signup/Benefits";
@@ -16,14 +16,18 @@ import {From_Step02} from "@/app/components/signup/FormStep02";
 import {RoutingLink} from "@/app/components/signin/RoutingLink";
 import {SecurityBadge} from "@/app/components/signin/SecurityBadge";
 
+import axios from "axios";
+
 
 export default function SignUpPage() {
+
+    // =============   STATE VARIABLES   =============
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
 
-    // Form state
+    // =============   USER INFORMATION   =============
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -36,12 +40,21 @@ export default function SignUpPage() {
 
     const colors = getColors(isDarkMode);
 
+
+
+    // =============   USE EFFECTS   =============
     useEffect(() => {
         const changeVisibility = () => {
             setIsVisible(true);
         }
         changeVisibility()
     }, []);
+
+
+
+
+
+    // =============   FUNCTIONS   =============
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -55,22 +68,22 @@ export default function SignUpPage() {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const userData = {
             name: fullName,
             email: email,
-            imageURL: imageURL || undefined,
+            imageURL: imageURL,
             joinedAt: new Date(),
             projects: [],
-            role: role || undefined,
+            role: role,
             isOwner: isOwner,
             isManager: isManager,
-            githubRepo: githubRepo || undefined,
+            githubRepo: githubRepo,
         };
 
-        console.log('Sign up data:', userData);
+        await axios.post('/api/users/signup', userData)
     };
 
     const nextStep = () => {
@@ -81,6 +94,8 @@ export default function SignUpPage() {
         if (currentStep > 1) setCurrentStep(currentStep - 1);
     };
 
+
+    // =============   UI   =============
     return (
         <div className={`min-h-screen ${colors.background.gradient} relative overflow-hidden`}>
             <ThemeToggle isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}/>
@@ -92,8 +107,7 @@ export default function SignUpPage() {
                 <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
 
                     {/* Left Side - Branding & Benefits */}
-                    <div
-                        className={`space-y-8 transition-all duration-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+                    <div className={`space-y-8 transition-all duration-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
 
                         <SidebarHeader isDarkMode={isDarkMode}/>
 
