@@ -51,22 +51,9 @@ export const upcomingTask: TASK[] = [
         createdAt: new Date(),
         submissionDate: new Date(Date.now() + 2 * 60 * 60 * 1000),
         createdBy: "user_001",
-        assignedTo: [
-            {
-                userId: "user_002",
-                joinedAt: new Date("2024-01-10"),
-                role: "Developer",
-            },
-        ],
+        assignedTo: ["user_002"],
         priority: PRIORITIES.High,
         status: STATUS.IN_PROGRESS,
-        subTasks: [
-            {
-                taskId: "task_001",
-                subText: "Check code quality",
-                priority: PRIORITIES.Medium,
-            },
-        ],
         isComplete: false,
         workQuality: null,
     },
@@ -92,18 +79,7 @@ export const upcomingTask: TASK[] = [
         createdAt: new Date(),
         submissionDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
         createdBy: "user_004",
-        assignedTo: [
-            {
-                userId: "user_005",
-                joinedAt: new Date("2024-02-01"),
-                role: "DevOps",
-            },
-            {
-                userId: "user_006",
-                joinedAt: new Date("2024-02-03"),
-                role: "Backend Engineer",
-            },
-        ],
+        assignedTo: ["user_005", "user_006"],
         priority: PRIORITIES.High,
         status: STATUS.TODO,
         isComplete: false,

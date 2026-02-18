@@ -1,6 +1,3 @@
-import {TEAM_MEMBERS} from "@/types/teamMember.type";
-
-
 export type PROJECT = {
     id: string
     name: string
@@ -10,6 +7,6 @@ export type PROJECT = {
     githubRepo?: string
     ownerId: string
     managerId: string
-    teamMembers: TEAM_MEMBERS[]
+    teamMembers: string[]
     completionDate: Date
 }

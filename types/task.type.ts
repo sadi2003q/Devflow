@@ -1,5 +1,3 @@
-import {TEAM_MEMBERS} from "@/types/teamMember.type";
-import {SUBTASK} from "@/types/subtask.type";
 import { PRIORITIES } from "@/types/subtask.type";
 
 export enum STATUS {
@@ -16,11 +14,10 @@ export type TASK = {
     createdAt: Date
     submissionDate: Date
     createdBy: string
-    assignedTo: TEAM_MEMBERS[]
+    assignedTo: string[]
     tag?: string
     priority: PRIORITIES
     status: STATUS
-    subTasks?: SUBTASK[]
     isComplete: boolean
     workQuality: number | null
 }
