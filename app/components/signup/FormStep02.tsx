@@ -7,6 +7,7 @@ import {getColors} from "@/lib/colors";
 
 type IForm_Step02 = {
     isDarkMode: boolean;
+    isSubmitting: boolean;
     imagePreview: string;
     role: string
     setRole: React.Dispatch<React.SetStateAction<string>>;
@@ -27,7 +28,7 @@ type IForm_Step02 = {
 }
 
 export const From_Step02 = (
-    {isDarkMode, imagePreview, handleImageUpload, role, setRole, githubRepo, setGithubRepo, isManager, setIsManager, isOwner, setIsOwner, prevStep, handleSubmit}: IForm_Step02,
+    {isDarkMode, isSubmitting, imagePreview, handleImageUpload, role, setRole, githubRepo, setGithubRepo, isManager, setIsManager, isOwner, setIsOwner, prevStep, handleSubmit}: IForm_Step02,
 ) => {
 
     const colors = getColors(isDarkMode);
@@ -129,12 +130,14 @@ export const From_Step02 = (
             <div className="flex gap-3 mt-6">
                 <button
                     onClick={prevStep}
+                    disabled={isSubmitting}
                     className={`flex-1 px-6 py-3 border-2 ${colors.border.secondary} ${colors.text.primary} font-semibold rounded-lg ${colors.hover.background} ${colors.hover.border} transition-all duration-200`}
                 >
                     Back
                 </button>
                 <button
                     onClick={handleSubmit}
+                    disabled={isSubmitting}
                     className="
                 group flex-1 px-6 py-3
                 rounded-lg border border-emerald-400
@@ -144,10 +147,11 @@ export const From_Step02 = (
                 hover:bg-emerald-400
                 hover:text-black
                 hover:border-emerald-400
+                disabled:opacity-70 disabled:cursor-not-allowed
                 flex items-center justify-center gap-2
                 "
                 >
-                    Create Account
+                    {isSubmitting ? "Creating..." : "Create Account"}
                     <Check className="w-5 h-5"/>
                 </button>
             </div>

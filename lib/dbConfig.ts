@@ -1,28 +1,17 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 
-dotenv.config({path: "D:\\Code\\Devflow\\.env"});
-
-const uri = process.env.MONGODB_URI;
+let isConnected = false;
 
 export const connect = async () => {
-    try {
-        if(uri) {
-            await mongoose.connect(uri);
-            const connection = mongoose.connection;
-
-            connection.on("connected" , () => {
-                console.log("Connected to MongoDB")
-            })
-
-            connection.on("error" , (err) => {
-                console.log("Error connecting to MongoDB", err)
-            })
-
-        }
-
-    } catch (error) {
-        console.log(error)
+    if (isConnected) {
+        return;
     }
-}
 
+    const uri = process.env.MONGODB_URI ?? process.env.MONGO_URI;
+    if (!uri) {
+        throw new Error("Missing MongoDB URI. Set MONGODB_URI (or MONGO_URI) in environment.");
+    }
+
+    await mongoose.connect(uri);
+    isConnected = true;
+};

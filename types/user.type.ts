@@ -1,12 +1,12 @@
 
 
 export type USER = {
-    ID: string
-    Name: string
+    id: string
+    name: string
     email: string
-    imageUTL?: string
-    joined_at: Date
-    Projects?:[string]
+    imageUrl?: string
+    joinedAt: Date
+    projects?: string[]
     role?: string
     isOwner?: boolean
     isManager?: boolean

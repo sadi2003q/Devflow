@@ -1,5 +1,4 @@
 import {Plus} from "lucide-react";
-import {p} from "@/mock/dashboard";
 import React from "react";
 import {PROJECT} from "@/types/project.type";
 import {getColors} from "@/lib/colors";
@@ -38,7 +37,7 @@ export const ProjectSection = (
 
                 <div className="space-y-4">
                     {projects.map((project) => (
-                        <div key={project.ID}
+                        <div key={project.id}
                              className={`${colors.background.tertiary} border ${colors.border.primary} rounded-lg p-4 ${colors.hover.border} transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]`}>
                             <div
                                 className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connect } from "@/lib/dbConfig";
 import { User } from '@/schema/user.schema'
 import bcryptjs from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { authCookieOptions, signAuthToken } from "@/lib/auth";
 
 await connect();
 
@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
             isOwner, isManager, githubRepo
         } = body;
 
-        if (!password) {
-            return NextResponse.json({ error: "Password is required" }, { status: 400 });
+        if (!name || !email || !password) {
+            return NextResponse.json({ error: "Name, email and password are required" }, { status: 400 });
         }
 
         const existingUser = await User.findOne({ email });
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
             name,
             email,
             password: hashedPassword,
-            imageUrl,
+            imageUrl: imageUrl ?? "",
             projects,
             role,
             isOwner,
@@ -43,10 +43,8 @@ export async function POST(req: NextRequest) {
             githubRepo
         });
 
-        const token = jwt.sign(
+        const token = signAuthToken(
             { id: user._id, email: user.email },
-            process.env.TOKEN_SECRET!,
-            { expiresIn: "1d" }
         );
 
         const response = NextResponse.json(
@@ -54,9 +52,7 @@ export async function POST(req: NextRequest) {
             { status: 201 }
         );
 
-        response.cookies.set("token", token, {
-            httpOnly: true,
-        });
+        response.cookies.set("token", token, authCookieOptions);
 
         return response;
 
@@ -67,5 +63,9 @@ export async function POST(req: NextRequest) {
                 { status: 500 }
             );
         }
+        return NextResponse.json(
+            { error: "Something went wrong" },
+            { status: 500 }
+        );
     }
 }

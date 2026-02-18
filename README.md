@@ -1,5 +1,14 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Variables
+
+Create `.env` with:
+
+```bash
+MONGODB_URI=...
+TOKEN_SECRET=...
+```
+
 ## Getting Started
 
 First, run the development server:

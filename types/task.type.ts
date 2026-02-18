@@ -3,25 +3,24 @@ import {SUBTASK} from "@/types/subtask.type";
 import { PRIORITIES } from "@/types/subtask.type";
 
 export enum STATUS {
-    WORKING="WORKING",
-    PENDING="PENDING",
-    COMPLETED="COMPLETED"
+    TODO = "todo",
+    IN_PROGRESS = "in-progress",
+    DONE = "done",
 }
 
 export type TASK = {
-    projectID: string
-    taskID: string
+    projectId: string
+    taskId: string
     title: string
     content: string
     createdAt: Date
     submissionDate: Date
     createdBy: string
     assignedTo: TEAM_MEMBERS[]
-    Tag?: string
+    tag?: string
     priority: PRIORITIES
     status: STATUS
-    subtask?: SUBTASK[]
+    subTasks?: SUBTASK[]
     isComplete: boolean
     workQuality: number | null
 }
-

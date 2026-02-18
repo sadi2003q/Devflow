@@ -14,6 +14,9 @@ import {FormSignIn} from "@/app/components/signin/FormSignIn";
 import {SignUpDivider} from "@/app/components/signin/Divider";
 import {SecurityBadge} from "@/app/components/signin/SecurityBadge";
 import {RoutingLink} from "@/app/components/signin/RoutingLink";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 
 export default function SignInPage() {
@@ -22,7 +25,9 @@ export default function SignInPage() {
     const [isVisible, setIsVisible] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const colors = getColors(isDarkMode);
+    const router = useRouter();
 
     useEffect(() => {
 
@@ -33,9 +38,26 @@ export default function SignInPage() {
 
     }, []);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Sign in attempt:', {email, password});
+        if (isSubmitting) {
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            const response = await axios.post("/api/users/signin", { email, password });
+            toast.success(response.data.message ?? "Signed in successfully");
+            router.push("/dashboard");
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.error ?? "Sign in failed");
+            } else {
+                toast.error("Sign in failed");
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -85,6 +107,7 @@ export default function SignInPage() {
                                 {/* Email/Password Form */}
                                 <FormSignIn
                                     isDarkMode={isDarkMode}
+                                    isSubmitting={isSubmitting}
                                     email={email}
                                     setEmail={setEmail}
                                     password={password}

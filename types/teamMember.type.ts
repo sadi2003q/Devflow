@@ -1,7 +1,7 @@
 
 
 export type TEAM_MEMBERS = {
-    userID: string
+    userId: string
     joinedAt: Date
-    Role: string
+    role: string
 }

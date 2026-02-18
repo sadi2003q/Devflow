@@ -6,6 +6,7 @@ import {getColors} from "./colors";
 type IFormSignIn = {
 
     isDarkMode: boolean;
+    isSubmitting: boolean;
     email: string
     setEmail: (value: React.SetStateAction<string>) => void
     password: string
@@ -18,7 +19,7 @@ type IFormSignIn = {
 }
 
 export const FormSignIn = (
-    {isDarkMode, email, setEmail, password, setPassword, showPassword, setShowPassword, handleSubmit
+    {isDarkMode, isSubmitting, email, setEmail, password, setPassword, showPassword, setShowPassword, handleSubmit
     }: IFormSignIn
 ) => {
 
@@ -88,6 +89,7 @@ export const FormSignIn = (
             {/* Submit Button */}
             <button
                 type="submit"
+                disabled={isSubmitting}
                 className="
                                             group w-full px-6 py-3 mt-6
                                             rounded-lg border border-emerald-400
@@ -99,9 +101,10 @@ export const FormSignIn = (
                                             hover:border-emerald-400
 
                                             flex items-center justify-center gap-2
+                                            disabled:opacity-70 disabled:cursor-not-allowed
                                           "
             >
-                Sign In
+                {isSubmitting ? "Signing In..." : "Sign In"}
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1"/>
             </button>
 

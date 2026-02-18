@@ -24,7 +24,7 @@ export const UpcomingTask_Section = (
             </div>
             <div className="space-y-3">
                 {upcomingTasks.map((task) => (
-                    <div key={task.taskID}
+                    <div key={task.taskId}
                          className={`flex items-center gap-3 p-3 ${colors.background.tertiary} border ${colors.border.primary} rounded-lg ${colors.hover.border} transition-all duration-200`}>
                         <div className={`w-2 h-2 rounded-full shrink-0 ${
                             task.priority === 'high' ? 'bg-red-400' :

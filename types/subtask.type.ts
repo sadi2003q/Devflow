@@ -7,7 +7,7 @@ export enum PRIORITIES {
 }
 
 export type SUBTASK = {
-    TaskID: string
-    SubText: string
+    taskId: string
+    subText: string
     priority: PRIORITIES
 }

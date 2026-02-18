@@ -1,4 +1,3 @@
-import {p} from "@/mock/dashboard";
 import React from "react";
 import {getColors} from "@/lib/colors";
 import {CheckCircle, Clock, GitBranch, Users} from "lucide-react";

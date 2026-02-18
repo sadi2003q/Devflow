@@ -2,14 +2,14 @@ import {TEAM_MEMBERS} from "@/types/teamMember.type";
 
 
 export type PROJECT = {
-    ID: string
+    id: string
     name: string
     description: string
     createdBy: string
     createdAt: Date
-    GithubRepo?: string
-    ownerID: string
-    managerID: string
+    githubRepo?: string
+    ownerId: string
+    managerId: string
     teamMembers: TEAM_MEMBERS[]
     completionDate: Date
 }

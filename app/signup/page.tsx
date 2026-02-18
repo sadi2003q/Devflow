@@ -33,12 +33,13 @@ export default function SignUpPage() {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [imageURL, setImageURL] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
     const [role, setRole] = useState('developer');
     const [isOwner, setIsOwner] = useState(false);
     const [isManager, setIsManager] = useState(false);
     const [githubRepo, setGithubRepo] = useState('');
     const [imagePreview, setImagePreview] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const colors = getColors(isDarkMode);
     const router = useRouter();
@@ -65,7 +66,7 @@ export default function SignUpPage() {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result as string);
-                setImageURL(reader.result as string);
+                setImageUrl(reader.result as string);
             };
             reader.readAsDataURL(file);
         }
@@ -73,12 +74,16 @@ export default function SignUpPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSubmitting) {
+            return;
+        }
         try {
+            setIsSubmitting(true);
             const userData = {
                 name: fullName,
                 email: email,
-                password: password,          // ✅ ADD THIS
-                imageURL: imageURL,
+                password: password,
+                imageUrl: imageUrl,
                 projects: [],
                 role: role,
                 isOwner: isOwner,
@@ -86,11 +91,17 @@ export default function SignUpPage() {
                 githubRepo: githubRepo,
             };
 
-            await axios.post('/api/users/signup', userData)
+            const response = await axios.post('/api/users/signup', userData)
+            toast.success(response.data.message ?? "User created successfully");
             router.push('/dashboard')
-        } catch (error) {
-            toast.error("Error signing up");
-            console.log(error);
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.error ?? "Error signing up");
+            } else {
+                toast.error("Error signing up");
+            }
+        } finally {
+            setIsSubmitting(false);
         }
 
 
@@ -177,6 +188,7 @@ export default function SignUpPage() {
                                             prevStep={prevStep}
                                             handleImageUpload={handleImageUpload}
                                             handleSubmit={handleSubmit}
+                                            isSubmitting={isSubmitting}
                                         />
                                     </>
                                 )}
